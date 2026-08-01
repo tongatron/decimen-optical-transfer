@@ -58,7 +58,9 @@ For the exact code-level delta, compare this repository with
    <kbd>V</kbd>, then choose **Start transmission**.
 4. Choose **Receiver** on the camera device, allow camera access, and point it
    at the animated QR code.
-5. When verification completes, download the reconstructed file.
+5. When verification completes, download the reconstructed file. On compatible
+   mobile browsers, use the native share sheet and choose **Save to Files** to
+   preserve the transferred bytes exactly.
 
 For best throughput, maximize the QR code, increase the sender's screen
 brightness, and keep the receiving device steady.
