@@ -181,6 +181,14 @@ Both Sender and Receiver expose an optional **Settings** panel.
 | `npm run dev` | Start the HTTPS development server on the local network. |
 | `npm run build` | Type-check and create the production bundle in `dist/`. |
 | `npm run preview` | Preview the production bundle locally. |
+| `npm test` | Run deterministic protocol, fountain, envelope, and simulator tests. |
+| `npm run test:browsers` | Run the fixed vectors in Chromium and WebKit with Playwright. |
+| `npm run simulate` | Run the reproducible binary optical-channel simulator. |
+
+An unlinked diagnostics page is available at `/benchmark/`. It measures
+fountain generation, QR generation, canvas rendering, capture, WASM decode,
+fountain peeling, and estimated goodput. Its JSON export contains metrics and
+test parameters only—never filenames, file contents, hashes, or session IDs.
 
 ## Acknowledgements
 

@@ -1,0 +1,49 @@
+.diagnostics {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto 48px;
+}
+
+.diagnostic-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 12px;
+}
+
+.diagnostic-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.privacy-note {
+  text-align: left;
+}
+
+#status {
+  margin: 20px 0;
+  color: #ffb257;
+}
+
+#results table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+}
+
+#results th,
+#results td {
+  padding: 10px;
+  border-bottom: 1px solid #594825;
+  text-align: left;
+}
+
+#benchmark-canvas,
+#camera-preview {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  margin: 24px auto;
+  border-radius: 8px;
+}

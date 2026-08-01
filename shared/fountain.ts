@@ -46,7 +46,7 @@ const SOLITON_C = 0.1;
 const SOLITON_DELTA = 0.5;
 
 /** Robust-soliton degree CDF for k source blocks. */
-function solitonCdf(k: number): Float64Array {
+export function robustSolitonCdf(k: number): Float64Array {
   const cdf = new Float64Array(k);
   if (k === 1) {
     cdf[0] = 1;
@@ -75,7 +75,12 @@ function frameSeed(sessionId: number, seq: number): number {
 }
 
 /** The block indices XORed into frame `seq` — identical on both ends. */
-function frameIndices(k: number, cdf: Float64Array, sessionId: number, seq: number): number[] {
+export function fountainFrameIndices(
+  k: number,
+  cdf: Float64Array,
+  sessionId: number,
+  seq: number,
+): number[] {
   const rnd = splitmix32(frameSeed(sessionId, seq));
   // inverse-CDF sample the degree
   const u = rnd() * 2 ** -32;
@@ -129,11 +134,11 @@ export class LTEncoder {
       const src = payload.subarray(b * blockLen, Math.min((b + 1) * blockLen, payload.length));
       bytes.set(src, b * this.words * 4);
     }
-    this.cdf = solitonCdf(this.k);
+    this.cdf = robustSolitonCdf(this.k);
   }
 
   encode(seq: number): Uint8Array {
-    const idx = frameIndices(this.k, this.cdf, this.sessionId, seq);
+    const idx = fountainFrameIndices(this.k, this.cdf, this.sessionId, seq);
     const out = new Uint32Array(this.words);
     for (const b of idx) {
       const off = b * this.words;
@@ -153,6 +158,7 @@ export class LTDecoder {
   private readonly cdf: Float64Array;
   private readonly solved: (Uint32Array | null)[];
   private readonly byBlock = new Map<number, Set<PendingFrame>>();
+  private readonly pendingFrames = new Set<PendingFrame>();
   private readonly seen = new Set<number>();
   solvedCount = 0;
   framesNew = 0;
@@ -165,12 +171,22 @@ export class LTDecoder {
     readonly totalLen: number,
   ) {
     this.words = Math.ceil(blockLen / 4);
-    this.cdf = solitonCdf(k);
+    this.cdf = robustSolitonCdf(k);
     this.solved = new Array<Uint32Array | null>(k).fill(null);
   }
 
   get isComplete(): boolean {
     return this.solvedCount >= this.k;
+  }
+
+  /** Approximate retained decoder memory, useful for repeatable diagnostics. */
+  get estimatedMemoryBytes(): number {
+    let bytes = this.cdf.byteLength + this.solved.length * 8 + this.seen.size * 8;
+    for (const solved of this.solved) bytes += solved?.byteLength ?? 0;
+    for (const pending of this.pendingFrames) {
+      bytes += pending.words.byteLength + pending.idx.size * 8 + 32;
+    }
+    return bytes;
   }
 
   addFrame(seq: number, block: Uint8Array): void {
@@ -182,7 +198,7 @@ export class LTDecoder {
     this.framesNew++;
     if (this.isComplete) return;
 
-    const idx = new Set(frameIndices(this.k, this.cdf, this.sessionId, seq));
+    const idx = new Set(fountainFrameIndices(this.k, this.cdf, this.sessionId, seq));
     const words = new Uint32Array(this.words);
     new Uint8Array(words.buffer).set(block.subarray(0, this.blockLen));
     for (const b of [...idx]) {
@@ -198,6 +214,7 @@ export class LTDecoder {
       return;
     }
     const pf: PendingFrame = { idx, words };
+    this.pendingFrames.add(pf);
     for (const b of idx) {
       let set = this.byBlock.get(b);
       if (!set) {
@@ -226,6 +243,7 @@ export class LTDecoder {
         xorInto(pf.words, w);
         pf.idx.delete(b);
         if (pf.idx.size === 1) {
+          this.pendingFrames.delete(pf);
           const r = pf.idx.values().next().value!;
           this.byBlock.get(r)?.delete(pf);
           if (!this.solved[r]) queue.push([r, pf.words]);

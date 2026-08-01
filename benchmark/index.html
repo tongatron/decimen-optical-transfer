@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121009" />
+    <title>Decimen Diagnostics</title>
+    <link rel="stylesheet" href="../shared/style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>DECIMEN <small>— Diagnostics</small></h1>
+    <main class="diagnostics">
+      <p>
+        Measure the fountain, QR, rendering, capture, decode, and peeling stages
+        independently. This page is intentionally absent from normal navigation.
+      </p>
+      <div class="diagnostic-controls">
+        <button id="run" type="button">Run benchmark</button>
+        <label>
+          <input id="include-camera" type="checkbox" />
+          Include a two-second camera capture test
+        </label>
+        <button id="export" type="button" disabled>Export anonymous JSON</button>
+      </div>
+      <p class="hint privacy-note">
+        No filenames, file contents, hashes, or session IDs are included in the export.
+      </p>
+      <div id="status" aria-live="polite">Ready.</div>
+      <div id="results" hidden></div>
+      <video id="camera-preview" muted playsinline hidden></video>
+      <canvas id="benchmark-canvas" aria-label="Synthetic QR benchmark frame"></canvas>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
