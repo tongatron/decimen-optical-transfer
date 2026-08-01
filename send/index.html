@@ -9,8 +9,12 @@
   <body>
     <h1>DECIMEN <small>— Fountain QR File Transfer</small></h1>
     <div class="file-picker">
-      <label for="payload-file">Choose a file to transmit</label>
-      <input id="payload-file" type="file" />
+      <div class="file-picker-title">Choose a file to transmit</div>
+      <div class="file-control">
+        <input class="file-input" id="payload-file" type="file" />
+        <label class="file-button" for="payload-file">Choose file</label>
+        <span class="file-name" id="file-name">No file selected</span>
+      </div>
       <button id="start-transfer" type="button" disabled>Start transmission</button>
     </div>
     <div class="hint" id="specs">No file selected · maximum 32 MB</div>

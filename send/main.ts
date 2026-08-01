@@ -25,6 +25,7 @@ const canvas = document.getElementById("qr") as HTMLCanvasElement;
 const stage = document.getElementById("stage")!;
 const specs = document.getElementById("specs")!;
 const fileInput = document.getElementById("payload-file") as HTMLInputElement;
+const fileName = document.getElementById("file-name")!;
 const startBtn = document.getElementById("start-transfer") as HTMLButtonElement;
 const cfgFps = document.getElementById("cfg-fps") as HTMLSelectElement;
 const cfgBytes = document.getElementById("cfg-bytes") as HTMLSelectElement;
@@ -60,6 +61,7 @@ async function selectFile() {
   startBtn.disabled = true;
   stage.hidden = true;
   const file = fileInput.files?.[0];
+  fileName.textContent = file?.name ?? "No file selected";
   if (!file) {
     specs.textContent = "No file selected · maximum 32 MB";
     return;

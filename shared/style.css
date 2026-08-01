@@ -63,20 +63,67 @@ button:disabled {
   justify-content: center;
   gap: 12px;
 }
-.file-picker label {
+.file-picker-title {
   width: 100%;
   color: #ffb257;
   text-align: center;
   font-weight: 700;
 }
-.file-picker input[type="file"] {
-  max-width: 100%;
+.file-control {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.file-button {
+  flex: 0 0 auto;
+  color: #121009;
+  background: #ffb257;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.file-button:hover {
+  background: #ffc477;
+}
+.file-button:active {
+  transform: translateY(1px);
+}
+.file-input:focus-visible + .file-button {
+  outline: 2px solid #ede5d4;
+  outline-offset: 3px;
+}
+.file-name {
+  min-width: 0;
+  max-width: 260px;
   color: #ede5d4;
-  font: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .file-picker button {
   padding: 9px 18px;
   font-size: 14px;
+}
+@media (max-width: 560px) {
+  .file-control {
+    width: 100%;
+    justify-content: center;
+  }
+  .file-name {
+    max-width: min(52vw, 260px);
+  }
 }
 .stage {
   background: #fff;
