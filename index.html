@@ -15,18 +15,33 @@
     <link rel="stylesheet" href="./shared/style.css" />
   </head>
   <body>
-    <h1>DECIMEN <small>— Fountain QR File Transfer (PoC)</small></h1>
-    <p class="hint">
-      Send a file between two devices using nothing but a screen and a camera.
-      Open <a href="./send/">send</a> on the device with the file (a laptop is
-      ideal) and <a href="./receive/">receive</a> on a phone, then point the
-      phone's camera at the flickering code.
-    </p>
-    <p class="hint">
-      No network path between the devices is used — the payload travels as
-      light. Fountain coding means the receiver can drop any frames, in any
-      order, and still reconstruct the file.
-    </p>
+    <h1>DECIMEN <small>— Fountain QR File Transfer</small></h1>
+    <main class="home">
+      <p class="home-lead">
+        Transfer a file between two devices using only a screen and a camera.
+        Choose what this device should do.
+      </p>
+      <nav class="home-actions" aria-label="Transfer mode">
+        <div class="home-function">
+          <a class="home-button" href="./send/">Render</a>
+          <p>
+            Choose a file and render its fountain-coded QR stream on this
+            screen.
+          </p>
+        </div>
+        <div class="home-function">
+          <a class="home-button" href="./receive/">Receiver</a>
+          <p>
+            Use this device's camera to scan the stream and reconstruct the
+            original file.
+          </p>
+        </div>
+      </nav>
+      <p class="home-note">
+        The file travels as light. No network path between the two devices is
+        used.
+      </p>
+    </main>
     <section class="pwa-install" data-pwa-panel hidden>
       <div class="pwa-install-title">Install Decimen</div>
       <button data-install-pwa type="button" hidden>Install app</button>
