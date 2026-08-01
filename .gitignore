@@ -3,5 +3,6 @@ dist/
 .env
 .env.*
 !.env.example
+ROADMAP.md
 *.local
 .DS_Store
