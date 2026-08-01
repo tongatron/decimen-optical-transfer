@@ -31,6 +31,15 @@
       <video id="camera-preview" muted playsinline hidden></video>
       <canvas id="benchmark-canvas" aria-label="Synthetic QR benchmark frame"></canvas>
     </main>
+    <script>
+      if (window.location.protocol === "file:") {
+        window.addEventListener("DOMContentLoaded", () => {
+          document.getElementById("run").disabled = true;
+          document.getElementById("status").textContent =
+            "This diagnostics page cannot run from file://. Start it with npm run dev, then open https://localhost:5173/benchmark/.";
+        });
+      }
+    </script>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

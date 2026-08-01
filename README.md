@@ -185,10 +185,12 @@ Both Sender and Receiver expose an optional **Settings** panel.
 | `npm run test:browsers` | Run the fixed vectors in Chromium and WebKit with Playwright. |
 | `npm run simulate` | Run the reproducible binary optical-channel simulator. |
 
-An unlinked diagnostics page is available at `/benchmark/`. It measures
-fountain generation, QR generation, canvas rendering, capture, WASM decode,
-fountain peeling, and estimated goodput. Its JSON export contains metrics and
-test parameters only—never filenames, file contents, hashes, or session IDs.
+An unlinked diagnostics page is available at `/benchmark/` while the development
+or preview server is running. It cannot run directly from a `file://` URL because
+it loads bundled modules and the ZXing WASM decoder. It measures fountain
+generation, QR generation, canvas rendering, capture, WASM decode, fountain
+peeling, and estimated goodput. Its JSON export contains metrics and test
+parameters only—never filenames, file contents, hashes, or session IDs.
 
 ## Acknowledgements
 
