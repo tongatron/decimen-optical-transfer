@@ -411,13 +411,32 @@ runButton.addEventListener("click", async () => {
   }
 });
 
-exportButton.addEventListener("click", () => {
+exportButton.addEventListener("click", async () => {
   if (!lastResult) return;
-  const blob = new Blob([`${JSON.stringify(lastResult, null, 2)}\n`], { type: "application/json" });
+  const contents = `${JSON.stringify(lastResult, null, 2)}\n`;
+  const file = new File([contents], "decimen-benchmark.json", { type: "application/json" });
+  const shareData: ShareData = {
+    files: [file],
+    title: "Decimen benchmark results",
+  };
+  if (navigator.share && navigator.canShare?.(shareData)) {
+    try {
+      await navigator.share(shareData);
+      status.textContent = "Benchmark JSON shared or saved.";
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        status.textContent = "Sharing failed; use Export again or try another browser.";
+      }
+    }
+    return;
+  }
+
+  const blob = new Blob([contents], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = "decimen-benchmark.json";
   anchor.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  status.textContent = "Benchmark JSON downloaded.";
 });

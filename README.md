@@ -194,7 +194,9 @@ by the Sender. The sender FPS is configurable; the optional camera test requests
 60 fps, falls back to 30 fps, and records the actual resolution and frame rate.
 Goodput is limited by the slowest measured stage instead of reporting
 compute-only throughput. Its JSON export contains metrics and test parameters
-only—never filenames, file contents, hashes, device IDs, or session IDs.
+only—never filenames, file contents, hashes, device IDs, or session IDs. On
+mobile browsers, export opens the native share sheet with a real JSON file;
+desktop browsers download the file normally.
 
 ## Acknowledgements
 
