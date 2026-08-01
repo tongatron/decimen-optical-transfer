@@ -16,15 +16,45 @@
         independently. This page is intentionally absent from normal navigation.
       </p>
       <div class="diagnostic-controls">
+        <label for="frame-density">
+          Frame density
+          <select id="frame-density">
+            <option value="all" selected>All sender densities</option>
+            <option value="500">500 B (QR v15)</option>
+            <option value="1000">1000 B (QR v22)</option>
+            <option value="1465">1465 B (QR v27)</option>
+            <option value="1850">1850 B (QR v32)</option>
+            <option value="2331">2331 B (QR v36)</option>
+            <option value="2953">2953 B (QR v40)</option>
+          </select>
+        </label>
+        <label for="sender-fps">
+          Sender FPS
+          <select id="sender-fps">
+            <option>10</option>
+            <option>15</option>
+            <option>20</option>
+            <option selected>24</option>
+            <option>30</option>
+            <option>60</option>
+          </select>
+        </label>
+        <label for="camera-fps">
+          Camera target FPS
+          <select id="camera-fps">
+            <option>30</option>
+            <option selected>60</option>
+          </select>
+        </label>
         <button id="run" type="button">Run benchmark</button>
-        <label>
+        <label class="camera-option">
           <input id="include-camera" type="checkbox" />
-          Include a two-second camera capture test
+          Include camera test (tries 60 → 30 fps)
         </label>
         <button id="export" type="button" disabled>Export anonymous JSON</button>
       </div>
       <p class="hint privacy-note">
-        No filenames, file contents, hashes, or session IDs are included in the export.
+        No filenames, file contents, hashes, device IDs, or session IDs are included in the export.
       </p>
       <div id="status" aria-live="polite">Ready.</div>
       <div id="results" hidden></div>

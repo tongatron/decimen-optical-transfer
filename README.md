@@ -189,8 +189,12 @@ An unlinked diagnostics page is available at `/benchmark/` while the development
 or preview server is running. It cannot run directly from a `file://` URL because
 it loads bundled modules and the ZXing WASM decoder. It measures fountain
 generation, QR generation, canvas rendering, capture, WASM decode, fountain
-peeling, and estimated goodput. Its JSON export contains metrics and test
-parameters only—never filenames, file contents, hashes, or session IDs.
+peeling, and optical goodput across the same six frame-density profiles offered
+by the Sender. The sender FPS is configurable; the optional camera test requests
+60 fps, falls back to 30 fps, and records the actual resolution and frame rate.
+Goodput is limited by the slowest measured stage instead of reporting
+compute-only throughput. Its JSON export contains metrics and test parameters
+only—never filenames, file contents, hashes, device IDs, or session IDs.
 
 ## Acknowledgements
 
