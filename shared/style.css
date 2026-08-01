@@ -204,6 +204,31 @@ a.download {
   text-decoration: none;
   overflow-wrap: anywhere;
 }
+.pwa-install {
+  width: min(92vw, 480px);
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #1b1712;
+  border: 1px solid #2e2718;
+  border-radius: 8px;
+}
+.pwa-install[hidden] {
+  display: none;
+}
+.pwa-install-title {
+  width: 100%;
+  color: #ffb257;
+  text-align: center;
+  font-weight: 700;
+}
+.pwa-install button {
+  padding: 9px 18px;
+  font-size: 14px;
+}
 #result {
   max-width: min(92vw, 640px);
   text-align: center;

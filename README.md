@@ -51,6 +51,20 @@ domain that resolves to 127.0.0.1 (same machine, nothing extra running).
 Hold the phone steady, or better, prop it against something. Camera
 autofocus hunting from hand tremor is the #1 throughput killer.
 
+## Install as an app
+
+The production build is a PWA with an offline app shell, standalone display,
+and Send/Receive shortcuts.
+
+- **Android / desktop Chromium:** open the site and use **Install app** or the
+  browser's install action.
+- **iPhone / iPad:** open the site in Safari, tap **Share**, then **Add to Home
+  Screen**.
+- **Browser:** no installation is required; the same URLs continue to work as
+  normal web pages.
+
+The installed app still needs camera permission on the receiving device.
+
 ## How it works
 
 **The one-way channel problem.** A screen-to-camera link has no back-channel:

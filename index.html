@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121009" />
+    <meta name="application-name" content="Decimen" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Decimen" />
     <title>Optical Transfer — fountain-coded QR file transfer</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="./shared/style.css" />
   </head>
   <body>
@@ -19,5 +27,13 @@
       light. Fountain coding means the receiver can drop any frames, in any
       order, and still reconstruct the file.
     </p>
+    <section class="pwa-install" data-pwa-panel hidden>
+      <div class="pwa-install-title">Install Decimen</div>
+      <button data-install-pwa type="button" hidden>Install app</button>
+      <div class="hint" data-install-help hidden>
+        On iPhone or iPad: tap Share, then “Add to Home Screen”.
+      </div>
+    </section>
+    <script type="module" src="./shared/pwa.ts"></script>
   </body>
 </html>

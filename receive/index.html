@@ -6,7 +6,15 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
     />
+    <meta name="theme-color" content="#121009" />
+    <meta name="application-name" content="Decimen" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Decimen" />
     <title>Optical Transfer — receive</title>
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="../shared/style.css" />
   </head>
   <body>
@@ -61,6 +69,7 @@
     </div>
     <div class="progress" id="progress" style="display: none"><div id="bar"></div></div>
     <div id="result"></div>
+    <script type="module" src="../shared/pwa.ts"></script>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
