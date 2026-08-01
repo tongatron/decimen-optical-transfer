@@ -1,151 +1,200 @@
-# Decimen Optical Transfer: fountain-coded QR file transfer
+# Decimen Optical Transfer
 
-Send a file between two devices using nothing but a **screen and a camera**.
-One page displays the file as an endless stream of animated QR codes; another
-device points its camera at it and reconstructs the file. **No network path
-between the devices, no app, no pairing, no permissions beyond the camera.**
-The payload travels as light.
+Transfer files directly from one device's screen to another device's camera
+with an animated, fountain-coded QR stream. The transfer needs no network path
+between the devices, account, pairing, native app, or intermediary server: the
+payload travels as light.
 
-This is a minimal proof of concept extracted from a larger
-experiment that reached **128 KB/s phone-to-phone** with denser frames,
-multi-code grids, and an error-corrected color channel. This version keeps
-only the essential trick and can transmit any file up to 2 MB at a
-comfortable rate. JPEG, PNG, and WebP images over 1 MB are optimized in the
-browser before transmission, with a maximum side of 1920 pixels.
+**[Open the live app](https://optical-transfer.tongatron.org/)**
+
+> This repository is a maintained fork of
+> [bashalarmistalt/decimen-optical-transfer](https://github.com/bashalarmistalt/decimen-optical-transfer).
+> It preserves the original MIT license and credits.
 
 <p align="center">
   <img src="docs/receiving.jpg" width="420"
-       alt="Phone receiving a 2 MB image over light: 129.2 KB/s goodput, decoding the sender's animated QR code" />
+       alt="A phone receiving a file from an animated QR code displayed on another screen" />
 </p>
-<p align="center"><em>Mid-transfer: a phone pulling a 2 MB image out of the air at 129 KB/s.</em></p>
 
-## Try it
+## Highlights
+
+- Transfers any file up to 2 MB while preserving its name and media type.
+- Optimizes JPEG, PNG, and WebP images larger than 1 MB in the browser.
+- Accepts files from the system picker or screenshots pasted from the clipboard.
+- Uses fountain coding, so missed or out-of-order frames do not require a restart.
+- Verifies the reconstructed payload before offering it for download.
+- Works on Safari/iOS through `zxing-wasm`; it does not depend on
+  `BarcodeDetector`.
+- Installs as a PWA with an offline app shell and Send/Receive shortcuts.
+- Keeps file contents on the two devices. The web server only delivers the app.
+
+## Changes from the original project
+
+The upstream proof of concept sends a bundled sample image. This fork adds:
+
+- arbitrary file selection, metadata preservation, and a 2 MB payload limit;
+- automatic browser-side optimization for large supported images;
+- clipboard image and screenshot pasting on the sender;
+- explicit sender start/pause controls and automatic restart after setting
+  changes;
+- a dedicated home screen, persistent navigation, responsive styling, and
+  clearer transfer status;
+- an installable PWA, generated service worker, offline app shell, icons, and
+  update-safe cache handling;
+- optional, environment-configured Umami analytics that never receives file
+  contents;
+- production-ready static hosting support.
+
+For the exact code-level delta, compare this repository with
+[`upstream/main`](https://github.com/bashalarmistalt/decimen-optical-transfer/compare/main...tongatron:main).
+
+## Use the hosted app
+
+1. Open [optical-transfer.tongatron.org](https://optical-transfer.tongatron.org/)
+   on both devices.
+2. Choose **Sender** on the device displaying the QR stream (a laptop or tablet
+   works best).
+3. Select a file, or paste an image with <kbd>Ctrl</kbd>/<kbd>⌘</kbd> +
+   <kbd>V</kbd>, then choose **Start transmission**.
+4. Choose **Receiver** on the camera device, allow camera access, and point it
+   at the animated QR code.
+5. When verification completes, download the reconstructed file.
+
+For best throughput, maximize the QR code, increase the sender's screen
+brightness, and keep the receiving device steady.
+
+## Install locally
+
+### Requirements
+
+- Node.js 18 or newer (a current LTS release is recommended)
+- npm
+- two devices on the same local network for a realistic screen-to-camera test
+
+### Development server
 
 ```bash
+git clone https://github.com/tongatron/decimen-optical-transfer.git
+cd decimen-optical-transfer
 npm install
 npm run dev
 ```
 
-- On the **sending** device (a laptop is ideal): open
-  `https://localhost:5173/send/`, choose a file, then select **Start
-  transmission**. Max screen brightness helps. The selected file stays in
-  the browser and is not uploaded to the server.
-- On the **receiving** device (a phone): open the `Network` URL Vite prints
-  (`https://<lan-ip>:5173/receive/`), accept the certificate warning once,
-  tap **Start camera**, and point it at the code.
-- When decoding completes: *Transfer Complete!* and a download link for the
-  original filename and media type, verified by hash. Images also get an
-  inline preview.
+Then:
 
-**Why the dev server is https-only:** the receiver uses `getUserMedia`, and
-browsers remove that API entirely on insecure origins: a phone reaching
-your dev server over plain http has no camera, full stop (`localhost` is
-exempt, but your phone isn't localhost). That's a web platform rule, not a
-choice. The dev server therefore ships with a self-signed certificate
-(`@vitejs/plugin-basic-ssl`); the browser will warn on first visit. Tap
-"Show Details" then "visit this website" (iOS) or "Advanced" then "Proceed"
-(Android/desktop), and the page is still a secure context, so the camera
-works. The odd-looking `lvh.me` hosts Vite prints are a public convenience
-domain that resolves to 127.0.0.1 (same machine, nothing extra running).
+1. On the sending device, open `https://localhost:5173/send/`.
+2. On the receiving device, open the `Network` URL printed by Vite, ending in
+   `/receive/`.
+3. Accept the self-signed certificate warning once on each device.
+4. Allow camera access on the receiver and start a transfer.
 
-Hold the phone steady, or better, prop it against something. Camera
-autofocus hunting from hand tremor is the #1 throughput killer.
+HTTPS is required because browsers expose `getUserMedia()` only in secure
+contexts (except on `localhost`). The development server uses a self-signed
+certificate through `@vitejs/plugin-basic-ssl`, so a first-visit warning is
+expected.
+
+### Production build
+
+```bash
+npm run build
+npm run preview
+```
+
+The deployable static site is generated in `dist/`. Host that directory at the
+root of an HTTPS origin. A reusable Nginx example is available at
+[`deploy/nginx-optical-transfer.conf`](deploy/nginx-optical-transfer.conf).
 
 ## Install as an app
 
-The production build is a PWA with an offline app shell, standalone display,
-and Send/Receive shortcuts.
+- **Android and desktop Chromium:** open the hosted site and choose the browser's
+  **Install app** action.
+- **iPhone and iPad:** open the site in Safari, choose **Share**, then
+  **Add to Home Screen**.
+- **Any supported browser:** installation is optional; the web app works
+  directly from its URL.
 
-- **Android / desktop Chromium:** open the site and use **Install app** or the
-  browser's install action.
-- **iPhone / iPad:** open the site in Safari, tap **Share**, then **Add to Home
-  Screen**.
-- **Browser:** no installation is required; the same URLs continue to work as
-  normal web pages.
+The installed PWA still needs camera permission on the receiving device.
 
-The installed app still needs camera permission on the receiving device.
+## Optional analytics
+
+Analytics are disabled unless a Website ID is provided at build time. Copy the
+example configuration and edit the local copy:
+
+```bash
+cp .env.example .env.local
+```
+
+```dotenv
+UMAMI_WEBSITE_ID=00000000-0000-0000-0000-000000000000
+UMAMI_SCRIPT_URL=https://cloud.umami.is/script.js
+```
+
+`UMAMI_SCRIPT_URL` is optional and only needs to change for a self-hosted Umami
+instance. Environment files other than `.env.example` are ignored by Git.
 
 ## How it works
 
-**The one-way channel problem.** A screen-to-camera link has no back-channel:
-the receiver can't ask for retransmission, and it will inevitably miss frames
-(blur, refresh straddling, autofocus). Looping the frames and hoping is
-miserable: miss one frame and you wait a full cycle for it to come around.
+A screen-to-camera channel has no back-channel: the receiver cannot request a
+missing frame, and blur, autofocus, or refresh timing will inevitably drop
+some frames. Sequentially looping chunks means one missed chunk can force the
+receiver to wait for an entire cycle.
 
-**Fountain codes fix this completely.** The sender never sends the file's
-blocks directly. Each frame is the XOR of a pseudorandom *subset* of blocks;
-the subset is derived deterministically from the frame's sequence number,
-with subset sizes drawn from a robust-soliton distribution ([Luby transform
-coding](https://en.wikipedia.org/wiki/Luby_transform_code)). The receiver
-collects **any** ~K·1.15 distinct frames, in any order, and peels the file
-out of them. Dropped frames cost a little time, never correctness. Sender
-and receiver frame rates don't need to match at all.
+Decimen instead uses an LT fountain code. Each QR frame contains the XOR of a
+deterministically selected subset of source blocks. The receiver can reconstruct
+the payload from roughly `K × 1.15` distinct frames in any order, so dropped
+frames cost time rather than correctness. A compact header identifies the
+session and carries the parameters required to join a stream already in
+progress.
 
-**Every frame is self-describing.** A 20-byte header carries the session id,
-sequence number, block count/size, file length, and a hash. There is no
-handshake: the receiver locks onto a stream mid-flight, and restarting the
-sender (new session id) automatically resets the receiver.
-
-**Decoding.** Safari has never shipped `BarcodeDetector` (WebKit bug 281848),
-so decoding is [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp) compiled
-to WASM, running in workers fed by `requestVideoFrameCallback`. Busy workers
-mean dropped frames, which the fountain happily absorbs.
-
-## Hard-won details baked into this PoC
-
-- **JS engines disagree about `Math.log`** (it's implementation-approximated).
-  Sender and receiver must build bit-identical soliton distributions, so
-  `fountain.ts` includes a deterministic log built from exactly-specified
-  IEEE-754 ops. V8 vs JavaScriptCore desync is a silent, total failure mode.
-- **iOS lies about camera frame rate.** `frameRate: {ideal: 60}` silently
-  delivers 30; you must demand `{exact: 60}` (works at 1280-wide capture)
-  and fall back. Always read back `getSettings()`.
-- **`requestVideoFrameCallback` chains outlive their stream** and resume on
-  the next one; without a generation counter, every stop/start leaks a
-  zombie capture loop.
-- **Progress bars must track frames collected, not blocks solved.** LT
-  peeling back-loads its solve cascade: block-count progress looks stalled
-  for most of the transfer, then teleports to 100%.
-- **QR error correction is set to the minimum (L).** In-frame ECC and the
-  fountain layer solve different problems (corruption vs erasure), but at
-  these frame sizes level L plus frame disposal is the better trade.
+The receiver decodes QR frames with
+[`zxing-wasm`](https://github.com/Sec-ant/zxing-wasm) in web workers, feeds the
+result into the fountain decoder, verifies the completed payload, and restores
+the original filename and media type.
 
 ## Tuning
 
-Both pages have a collapsed **Settings** panel. On the sender: tx fps, bytes
-per frame, error-correction level, and display size. Changing anything while
-transmitting restarts the stream, and the receiver resets automatically off
-the new session id. On the receiver: capture width, capture fps, and decode
-worker count, applied when the camera starts.
+Both Sender and Receiver expose an optional **Settings** panel.
 
-| setting | default | notes |
-|---|---|---|
-| tx fps | 24 | each frame must own at least 2 refresh cycles of the display |
-| bytes / frame | 1465 (QR v27) | denser is faster if the receiver still decodes it; 2953 (v40) works phone-to-phone at close range |
+| Setting | Default | Guidance |
+|---|---:|---|
+| Sender frame rate | 24 fps | Each QR frame should remain visible for at least two display refresh cycles. |
+| Bytes per frame | 1465 (QR v27) | Higher density can be faster if the camera still decodes reliably. |
+| QR error correction | L | Fountain coding handles lost frames; QR ECC handles corruption within a frame. |
+| Receiver workers | Device-dependent | More workers can help until camera decoding becomes the bottleneck. |
 
-The parent experiment's measured ceiling with this exact architecture plus
-denser frames, a 120 fps ProMotion sender, and stacked codes: ~128 KB/s
-handheld, ~186 KB/s propped.
+## Privacy and limitations
 
-## Similar projects
+- File contents are processed locally in the browser and are not uploaded by
+  this application.
+- Camera access is used only on the Receiver page and requires explicit browser
+  permission.
+- The current payload limit is 2 MB.
+- Optical performance depends on screen brightness, camera focus, distance,
+  reflections, motion, and device refresh/capture rates.
+- Optional Umami analytics, when configured by a deployer, measure site usage;
+  they do not receive the transferred file or its contents.
 
-The concept here was arrived at independently. It turns out
-several people have had similar ideas, and their takes are all
-worth a look:
+## Scripts
 
-- [mohankumarelec/airgapped-qr-code-transfer](https://github.com/mohankumarelec/airgapped-qr-code-transfer):
-  browser-based QR file transfer with compression and sequential chunking.
-  Discovered after publicly demoing this project; convergent evolution in
-  action.
-- [divan/txqr](https://github.com/divan/txqr) (2018): animated QR plus
-  fountain codes in Go, with two excellent write-ups on why fountain coding
-  beats sequential looping.
-- [sz3/libcimbar](https://github.com/sz3/libcimbar): goes past QR entirely
-  with a custom high-density color code purpose-built for this channel.
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the HTTPS development server on the local network. |
+| `npm run build` | Type-check and create the production bundle in `dist/`. |
+| `npm run preview` | Preview the production bundle locally. |
 
-Built with [node-qrcode](https://github.com/soldair/node-qrcode) and
-[zxing-wasm](https://github.com/Sec-ant/zxing-wasm).
+## Acknowledgements
+
+This project is based on the original work by
+[BashAlarmist](https://github.com/bashalarmistalt). It uses
+[`qrcode`](https://github.com/soldair/node-qrcode) for QR generation and
+[`zxing-wasm`](https://github.com/Sec-ant/zxing-wasm) for decoding.
+
+Related projects worth exploring include
+[`divan/txqr`](https://github.com/divan/txqr),
+[`sz3/libcimbar`](https://github.com/sz3/libcimbar), and
+[`mohankumarelec/airgapped-qr-code-transfer`](https://github.com/mohankumarelec/airgapped-qr-code-transfer).
 
 ## License
 
-MIT
+Distributed under the same [MIT License](LICENSE) as the original repository.
+The original copyright notice is retained.

@@ -49,7 +49,8 @@ let streamPaused = false;
 let previewUrl: string | null = null;
 
 async function main() {
-  fileInput.addEventListener("change", () => void selectFile());
+  fileInput.addEventListener("change", () => void selectFile(fileInput.files?.[0]));
+  document.addEventListener("paste", (event) => void pasteImage(event));
   startBtn.addEventListener("click", () => void startStream());
   pauseBtn.addEventListener("click", toggleStreamPause);
   for (const el of [cfgFps, cfgBytes, cfgEcc, cfgSize]) {
@@ -65,7 +66,28 @@ async function main() {
   }
 }
 
-async function selectFile() {
+async function pasteImage(event: ClipboardEvent) {
+  const image = Array.from(event.clipboardData?.items ?? [])
+    .find((item) => item.kind === "file" && item.type.startsWith("image/"))
+    ?.getAsFile();
+  if (!image) return;
+
+  event.preventDefault();
+  fileInput.value = "";
+  const name = image.name && image.name !== "image.png" ? image.name : screenshotFileName(image.type);
+  const pastedImage = new File([image], name, {
+    type: image.type || "image/png",
+    lastModified: Date.now(),
+  });
+  await selectFile(pastedImage);
+}
+
+function screenshotFileName(type: string): string {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  return `screenshot-${timestamp}.${extensionForType(type)}`;
+}
+
+async function selectFile(file: File | undefined) {
   const gen = ++generation;
   streaming = false;
   selectedPayload = null;
@@ -75,7 +97,6 @@ async function selectFile() {
   streamControls.hidden = true;
   setStreamPaused(false);
   clearPreview();
-  const file = fileInput.files?.[0];
   fileName.textContent = file?.name ?? "No file selected";
   if (!file) {
     specs.textContent = "Maximum 2 MB · images over 1 MB are optimized";

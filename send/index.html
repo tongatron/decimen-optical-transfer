@@ -20,7 +20,7 @@
       <a href="../">← Home</a>
     </nav>
     <div class="file-picker">
-      <div class="file-picker-title">Choose a file to transmit</div>
+      <div class="file-picker-title">Choose a file or paste a screenshot</div>
       <div class="file-control">
         <input class="file-input" id="payload-file" type="file" />
         <label class="file-button" for="payload-file">Choose file</label>
@@ -32,7 +32,13 @@
       <img id="selected-image" alt="Selected image preview" />
       <div id="optimization-summary"></div>
     </div>
-    <div class="hint" id="specs">Maximum 2 MB · images over 1 MB are optimized</div>
+    <div class="hint paste-hint">
+      From a computer, press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>V</kbd> to paste an image
+      from the clipboard.
+    </div>
+    <div class="hint" id="specs" aria-live="polite">
+      Maximum 2 MB · images over 1 MB are optimized
+    </div>
     <details class="settings">
       <summary>Settings</summary>
       <div class="row">

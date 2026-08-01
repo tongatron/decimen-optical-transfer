@@ -1,9 +1,30 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import type { Plugin } from "vite";
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+function umamiAnalytics(websiteId: string, scriptUrl: string): Plugin {
+  return {
+    name: "decimen-umami-analytics",
+    transformIndexHtml() {
+      if (!websiteId) return [];
+
+      return [
+        {
+          tag: "script",
+          attrs: {
+            defer: true,
+            src: scriptUrl,
+            "data-website-id": websiteId,
+          },
+          injectTo: "head",
+        },
+      ];
+    },
+  };
+}
 
 function pwaServiceWorker(): Plugin {
   return {
@@ -93,17 +114,28 @@ self.addEventListener("fetch", (event) => {
 // gets no camera on plain http (browser rule, localhost-only exemption).
 // The generated cert is self-signed: tap through the warning once on the
 // phone and the page is still a secure context, so the camera works.
-export default defineConfig({
-  base: "./",
-  plugins: [basicSsl(), pwaServiceWorker()],
-  build: {
-    rollupOptions: {
-      input: {
-        index: resolve(__dirname, "index.html"),
-        send: resolve(__dirname, "send/index.html"),
-        receive: resolve(__dirname, "receive/index.html"),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "UMAMI_");
+
+  return {
+    base: "./",
+    plugins: [
+      basicSsl(),
+      umamiAnalytics(
+        env.UMAMI_WEBSITE_ID ?? "",
+        env.UMAMI_SCRIPT_URL || "https://cloud.umami.is/script.js",
+      ),
+      pwaServiceWorker(),
+    ],
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, "index.html"),
+          send: resolve(__dirname, "send/index.html"),
+          receive: resolve(__dirname, "receive/index.html"),
+        },
       },
     },
-  },
-  server: { host: true },
+    server: { host: true },
+  };
 });
