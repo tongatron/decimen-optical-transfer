@@ -14,8 +14,7 @@
 
 import QRCode from "qrcode";
 import { packFile } from "../shared/file-envelope";
-import { LTEncoder } from "../shared/fountain";
-import { HEADER_LEN, fnv1a, packFrame, type FrameHeader } from "../shared/protocol";
+import { TransferEncoder } from "../shared/transfer-encoder";
 
 const MARGIN = 4; // quiet-zone modules
 const LOOKAHEAD = 3;
@@ -259,31 +258,22 @@ async function startStream() {
   const displayPx = Number(cfgSize.value);
 
   const sessionId = (Math.floor(Math.random() * 0xffff) + 1) & 0xffff;
-  const blockLen = frameBytes - HEADER_LEN;
-  const encoder = new LTEncoder(payload, blockLen, sessionId);
-  if (encoder.k > 0xffff) {
-    specs.textContent = "✗ file needs too many fountain blocks; select a smaller file";
+  let encoder: TransferEncoder;
+  try {
+    encoder = new TransferEncoder(payload, frameBytes, sessionId);
+  } catch (error) {
+    specs.textContent = `✗ ${error instanceof Error ? error.message : String(error)}`;
     return;
   }
   streaming = true;
   setStreamPaused(false);
   stage.hidden = false;
   streamControls.hidden = false;
-  const header: FrameHeader = {
-    sessionId,
-    seq: 0,
-    k: encoder.k,
-    blockLen,
-    totalLen: payload.length,
-    payloadFnv: fnv1a(payload),
-  };
-
   let version: number | undefined; // locked after the first frame
   let modules = 0;
   let scale = 1;
   const staging = document.createElement("canvas");
   const queue: ImageData[] = [];
-  let nextSeq = 0;
 
   const sizeCanvas = () => {
     const dpr = window.devicePixelRatio || 1;
@@ -299,8 +289,7 @@ async function startStream() {
   };
 
   const makeFrame = (): ImageData => {
-    const bytes = packFrame({ ...header, seq: nextSeq }, encoder.encode(nextSeq));
-    nextSeq++;
+    const { bytes } = encoder.encodeNext();
     const qr = QRCode.create([{ data: bytes, mode: "byte" } as unknown as QRCode.QRCodeSegment], {
       errorCorrectionLevel: ecc,
       version,

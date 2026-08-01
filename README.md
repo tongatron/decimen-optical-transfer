@@ -21,6 +21,7 @@ payload travels as light.
 - Transfers any file up to 2 MB while preserving its name and media type.
 - Optimizes JPEG, PNG, and WebP images larger than 1 MB in the browser.
 - Accepts files from the system picker or screenshots pasted from the clipboard.
+- Sends files from the CLI through a local, browser-rendered animated QR stream.
 - Uses fountain coding, so missed or out-of-order frames do not require a restart.
 - Verifies the reconstructed payload before offering it for download.
 - Works on Safari/iOS through `zxing-wasm`; it does not depend on
@@ -106,6 +107,69 @@ The deployable static site is generated in `dist/`. Host that directory at the
 root of an HTTPS origin. A reusable Nginx example is available at
 [`deploy/nginx-optical-transfer.conf`](deploy/nginx-optical-transfer.conf).
 
+### Send from the command line
+
+The CLI sender accepts a file path and opens a local browser page containing the
+animated QR stream. It uses the same file envelope, fountain encoder, and frame
+protocol as the web sender.
+
+Install the project dependencies once:
+
+```bash
+npm install
+```
+
+From the repository directory, send a file with:
+
+```bash
+npm run send -- ./document.pdf
+```
+
+The file path may be relative or absolute. To run the command from any working
+directory, use npm's `--prefix` option:
+
+```bash
+npm --prefix /absolute/path/to/decimen-optical-transfer run send -- /absolute/path/to/document.pdf
+```
+
+The command binds a temporary HTTP server to `127.0.0.1`, prints its URL, and
+opens it in the default browser. The server is reachable only from the sending
+computer; the file is not uploaded anywhere.
+
+To receive the file:
+
+1. Keep the CLI process and its browser page open.
+2. Open Decimen's **Receiver** on the camera device and start the camera.
+3. Point the camera at the animated QR code and use **Fullscreen** if needed.
+4. Wait for verification to complete, then save the reconstructed file.
+5. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the sending terminal to stop the local
+   server.
+
+#### CLI options
+
+| Option | Default | Purpose |
+|---|---:|---|
+| `--fps <n>` | 24 | Set the frame rate from greater than 0 through 30 FPS. |
+| `--frame-bytes <n>` | 1465 | Set QR density from 32 through 2953 bytes per frame. |
+| `--ecc <L\|M\|Q\|H>` | L | Set QR error correction; higher levels may require smaller frames. |
+| `--no-open` | Off | Print the local URL without opening the browser automatically. |
+| `--terminal` | Off | Use experimental ANSI rendering instead of the browser page. |
+| `--frames <n>` | Unlimited | Stop ANSI output after a fixed number of frames; requires `--terminal`. |
+
+For example, to use a slower and less dense stream:
+
+```bash
+npm run send -- ./document.pdf --fps 8 --frame-bytes 300 --ecc L
+```
+
+ANSI mode defaults to 64-byte frames at 6 FPS so it fits a standard 80×24
+terminal. Terminal font metrics and line spacing can deform the QR modules, so
+the browser renderer is strongly recommended for camera transfers.
+
+The CLI has the same 2 MB input limit as the web sender. If the Receiver cannot
+decode the browser-rendered stream, maximize the page, increase screen
+brightness, or reduce `--fps` and `--frame-bytes`.
+
 ## Install as an app
 
 - **Android and desktop Chromium:** open the hosted site and choose the browser's
@@ -183,6 +247,7 @@ Both Sender and Receiver expose an optional **Settings** panel.
 | `npm run dev` | Start the HTTPS development server on the local network. |
 | `npm run build` | Type-check and create the production bundle in `dist/`. |
 | `npm run preview` | Preview the production bundle locally. |
+| `npm run send -- <file>` | Send a file from the CLI through a local animated QR page. |
 | `npm test` | Run deterministic protocol, fountain, envelope, and simulator tests. |
 | `npm run test:browsers` | Run the fixed vectors in Chromium and WebKit with Playwright. |
 | `npm run simulate` | Run the reproducible binary optical-channel simulator. |

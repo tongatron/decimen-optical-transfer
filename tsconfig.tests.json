@@ -5,6 +5,7 @@
   },
   "include": [
     "shared",
+    "cli",
     "simulator",
     "tests",
     "playwright.config.ts",

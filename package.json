@@ -21,6 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browsers": "playwright test",
+    "send": "tsx cli/send.ts",
     "simulate": "tsx simulator/cli.ts",
     "check": "npm run test && npm run build"
   },
