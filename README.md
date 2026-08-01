@@ -12,8 +12,8 @@ payload travels as light.
 > It preserves the original MIT license and credits.
 
 <p align="center">
-  <img src="docs/receiving.jpg" width="420"
-       alt="A phone receiving a file from an animated QR code displayed on another screen" />
+  <img src="docs/decimen-app-overview.png" width="100%"
+       alt="Decimen home, sender, and receiver screens showing a fountain-coded QR file transfer in progress" />
 </p>
 
 ## Highlights
