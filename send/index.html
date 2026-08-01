@@ -17,7 +17,11 @@
       </div>
       <button id="start-transfer" type="button" disabled>Start transmission</button>
     </div>
-    <div class="hint" id="specs">No file selected · maximum 32 MB</div>
+    <div class="sender-preview" id="sender-preview" hidden>
+      <img id="selected-image" alt="Selected image preview" />
+      <div id="optimization-summary"></div>
+    </div>
+    <div class="hint" id="specs">Maximum 2 MB · images over 1 MB are optimized</div>
     <details class="settings">
       <summary>Settings</summary>
       <div class="row">

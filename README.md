@@ -9,8 +9,9 @@ The payload travels as light.
 This is a minimal proof of concept extracted from a larger
 experiment that reached **128 KB/s phone-to-phone** with denser frames,
 multi-code grids, and an error-corrected color channel. This version keeps
-only the essential trick and can transmit any file up to 32 MB at a
-comfortable rate.
+only the essential trick and can transmit any file up to 2 MB at a
+comfortable rate. JPEG, PNG, and WebP images over 1 MB are optimized in the
+browser before transmission, with a maximum side of 1920 pixels.
 
 <p align="center">
   <img src="docs/receiving.jpg" width="420"

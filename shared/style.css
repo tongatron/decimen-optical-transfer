@@ -125,6 +125,33 @@ button:disabled {
     max-width: min(52vw, 260px);
   }
 }
+.sender-preview {
+  width: min(92vw, 640px);
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #1b1712;
+  border: 1px solid #2e2718;
+  border-radius: 8px;
+  color: #9a8f76;
+  font-size: 12px;
+}
+.sender-preview[hidden] {
+  display: none;
+}
+.sender-preview img {
+  width: 84px;
+  height: 64px;
+  object-fit: contain;
+  background: #121009;
+  border-radius: 6px;
+}
+.sender-preview div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .stage {
   background: #fff;
   padding: 20px;
