@@ -13,38 +13,37 @@
 //   handles erasures, and a frame is either decoded whole or discarded.
 
 import QRCode from "qrcode";
+import { packFile } from "../shared/file-envelope";
 import { LTEncoder } from "../shared/fountain";
 import { HEADER_LEN, fnv1a, packFrame, type FrameHeader } from "../shared/protocol";
 
 const MARGIN = 4; // quiet-zone modules
 const LOOKAHEAD = 3;
+const MAX_FILE_BYTES = 32 * 1024 * 1024;
 
 const canvas = document.getElementById("qr") as HTMLCanvasElement;
+const stage = document.getElementById("stage")!;
 const specs = document.getElementById("specs")!;
-const cfgPayload = document.getElementById("cfg-payload") as HTMLSelectElement;
+const fileInput = document.getElementById("payload-file") as HTMLInputElement;
+const startBtn = document.getElementById("start-transfer") as HTMLButtonElement;
 const cfgFps = document.getElementById("cfg-fps") as HTMLSelectElement;
 const cfgBytes = document.getElementById("cfg-bytes") as HTMLSelectElement;
 const cfgEcc = document.getElementById("cfg-ecc") as HTMLSelectElement;
 const cfgSize = document.getElementById("cfg-size") as HTMLInputElement;
 
-const payloadCache = new Map<string, Uint8Array>();
 let generation = 0; // bumped on every restart; stale loops see it and die
-
-async function loadPayload(url: string): Promise<Uint8Array | null> {
-  const hit = payloadCache.get(url);
-  if (hit) return hit;
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const bytes = new Uint8Array(await res.arrayBuffer());
-  payloadCache.set(url, bytes);
-  return bytes;
-}
+let selectedPayload: Uint8Array | null = null;
+let selectedFile: File | null = null;
+let streaming = false;
 
 async function main() {
-  for (const el of [cfgPayload, cfgFps, cfgBytes, cfgEcc, cfgSize]) {
-    el.addEventListener("change", () => void startStream());
+  fileInput.addEventListener("change", () => void selectFile());
+  startBtn.addEventListener("click", () => void startStream());
+  for (const el of [cfgFps, cfgBytes, cfgEcc, cfgSize]) {
+    el.addEventListener("change", () => {
+      if (streaming) void startStream();
+    });
   }
-  await startStream();
   try {
     await (navigator as Navigator & { wakeLock?: { request(t: "screen"): Promise<unknown> } })
       .wakeLock?.request("screen");
@@ -53,14 +52,42 @@ async function main() {
   }
 }
 
-async function startStream() {
+async function selectFile() {
   const gen = ++generation;
-  const payload = await loadPayload(cfgPayload.value);
-  if (!payload) {
-    specs.textContent = `✗ couldn't load ${cfgPayload.value}`;
+  streaming = false;
+  selectedPayload = null;
+  selectedFile = null;
+  startBtn.disabled = true;
+  stage.hidden = true;
+  const file = fileInput.files?.[0];
+  if (!file) {
+    specs.textContent = "No file selected · maximum 32 MB";
     return;
   }
-  if (gen !== generation) return; // superseded while fetching
+  if (file.size > MAX_FILE_BYTES) {
+    specs.textContent = `✗ ${file.name} is larger than the 32 MB limit`;
+    return;
+  }
+  specs.textContent = `Reading ${file.name}…`;
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (gen !== generation) return;
+  selectedPayload = packFile({ name: file.name, type: file.type, bytes });
+  selectedFile = file;
+  startBtn.disabled = false;
+  specs.textContent = `${file.name} · ${formatBytes(file.size)} · ready to transmit`;
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+async function startStream() {
+  if (!selectedPayload || !selectedFile) return;
+  const gen = ++generation;
+  const payload = selectedPayload;
+  const file = selectedFile;
   const txFps = Number(cfgFps.value);
   const frameBytes = Number(cfgBytes.value);
   const ecc = cfgEcc.value as "L" | "M" | "Q" | "H";
@@ -69,6 +96,12 @@ async function startStream() {
   const sessionId = (Math.floor(Math.random() * 0xffff) + 1) & 0xffff;
   const blockLen = frameBytes - HEADER_LEN;
   const encoder = new LTEncoder(payload, blockLen, sessionId);
+  if (encoder.k > 0xffff) {
+    specs.textContent = "✗ file needs too many fountain blocks; select a smaller file";
+    return;
+  }
+  streaming = true;
+  stage.hidden = false;
   const header: FrameHeader = {
     sessionId,
     seq: 0,
@@ -112,7 +145,7 @@ async function startStream() {
       sizeCanvas();
       specs.textContent =
         `${txFps} FPS · ${frameBytes} bytes per frame · V${version} · ECC ${ecc} · ` +
-        `${Math.round(payload.length / 1024)} KB payload · K=${encoder.k}`;
+        `${file.name} · ${formatBytes(file.size)} · K=${encoder.k}`;
     }
     const size = qr.modules.size;
     const data = qr.modules.data;

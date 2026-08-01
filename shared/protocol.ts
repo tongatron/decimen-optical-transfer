@@ -10,7 +10,7 @@
 //   8  u16  k           source block count
 //  10  u16  blockLen    payload bytes per frame
 //  12  u32  totalLen    file length in bytes
-//  16  u32  payloadFnv  FNV-1a of the whole file — verified on completion
+//  16  u32  payloadFnv  FNV-1a of the whole payload — verified on completion
 
 export const HEADER_LEN = 20;
 const MAGIC0 = 0xd1;

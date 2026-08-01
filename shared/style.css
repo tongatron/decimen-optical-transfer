@@ -47,6 +47,37 @@ button {
   font-weight: 700;
   cursor: pointer;
 }
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.file-picker {
+  width: min(92vw, 640px);
+  background: #1b1712;
+  border: 1px solid #2e2718;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.file-picker label {
+  width: 100%;
+  color: #ffb257;
+  text-align: center;
+  font-weight: 700;
+}
+.file-picker input[type="file"] {
+  max-width: 100%;
+  color: #ede5d4;
+  font: inherit;
+}
+.file-picker button {
+  padding: 9px 18px;
+  font-size: 14px;
+}
 .stage {
   background: #fff;
   padding: 20px;
@@ -84,7 +115,28 @@ button {
   font-size: 22px;
   font-weight: 700;
 }
+.file-metadata {
+  margin: 6px 0 14px;
+  color: #9a8f76;
+  overflow-wrap: anywhere;
+}
+a.download {
+  display: inline-block;
+  color: #121009;
+  background: #ffb257;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+#result {
+  max-width: min(92vw, 640px);
+  text-align: center;
+}
 img.received {
+  display: block;
+  margin-top: 16px;
   max-width: min(92vw, 640px);
   border-radius: 10px;
 }

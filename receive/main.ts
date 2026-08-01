@@ -9,6 +9,7 @@
 //   cascade, so blocks-solved looks stalled and then teleports to done.
 
 import { LTDecoder } from "../shared/fountain";
+import { unpackFile } from "../shared/file-envelope";
 import { fnv1a, parseFrame } from "../shared/protocol";
 
 const OVERHEAD_EST = 1.18; // expected frames ≈ K × this (robust-soliton ε)
@@ -169,16 +170,35 @@ function finish(payload: Uint8Array, hashOk: boolean, seconds: number, totalLen:
   stream?.getTracks().forEach((t) => t.stop());
   preview.style.display = "none";
   bar.style.width = "100%";
-  const kb = Math.round(totalLen / 1024);
+  const transferred = unpackFile(payload) ?? {
+    name: "received.png",
+    type: "image/png",
+    bytes: payload,
+  };
+  const kb = Math.round(transferred.bytes.length / 1024);
   const rate = (totalLen / 1024 / seconds).toFixed(1);
   stats.textContent = `${kb} KB in ${seconds.toFixed(1)} s · ${rate} KB/s · hash ${hashOk ? "verified ✓" : "MISMATCH ✗"}`;
   const heading = document.createElement("div");
   heading.className = "done";
   heading.textContent = "Transfer Complete!";
-  const img = document.createElement("img");
-  img.className = "received";
-  img.src = URL.createObjectURL(new Blob([payload as BlobPart], { type: "image/png" }));
-  result.append(heading, img);
+  const metadata = document.createElement("div");
+  metadata.className = "file-metadata";
+  metadata.textContent = `${transferred.name} · ${transferred.type} · ${kb} KB`;
+  const blob = new Blob([transferred.bytes as BlobPart], { type: transferred.type });
+  const url = URL.createObjectURL(blob);
+  const download = document.createElement("a");
+  download.className = "download";
+  download.href = url;
+  download.download = transferred.name;
+  download.textContent = `Download ${transferred.name}`;
+  result.replaceChildren(heading, metadata, download);
+  if (transferred.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.className = "received";
+    img.src = url;
+    img.alt = transferred.name;
+    result.append(img);
+  }
 }
 
 function updateStats() {

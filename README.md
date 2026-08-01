@@ -8,9 +8,9 @@ The payload travels as light.
 
 This is a minimal proof of concept extracted from a larger
 experiment that reached **128 KB/s phone-to-phone** with denser frames,
-multi-code grids, and an error-corrected color channel. This PoC keeps only
-the essential trick and transmits a 512 KB image (or a 2 MB one, selectable
-in the sender's settings) at a comfortable rate.
+multi-code grids, and an error-corrected color channel. This version keeps
+only the essential trick and can transmit any file up to 32 MB at a
+comfortable rate.
 
 <p align="center">
   <img src="docs/receiving.jpg" width="420"
@@ -26,13 +26,15 @@ npm run dev
 ```
 
 - On the **sending** device (a laptop is ideal): open
-  `https://localhost:5173/send/` and it starts streaming immediately. Max
-  screen brightness helps.
+  `https://localhost:5173/send/`, choose a file, then select **Start
+  transmission**. Max screen brightness helps. The selected file stays in
+  the browser and is not uploaded to the server.
 - On the **receiving** device (a phone): open the `Network` URL Vite prints
   (`https://<lan-ip>:5173/receive/`), accept the certificate warning once,
   tap **Start camera**, and point it at the code.
-- A few seconds later: *Transfer Complete!* and the received image, verified
-  by hash.
+- When decoding completes: *Transfer Complete!* and a download link for the
+  original filename and media type, verified by hash. Images also get an
+  inline preview.
 
 **Why the dev server is https-only:** the receiver uses `getUserMedia`, and
 browsers remove that API entirely on insecure origins: a phone reaching
@@ -95,11 +97,11 @@ mean dropped frames, which the fountain happily absorbs.
 
 ## Tuning
 
-Both pages have a collapsed **Settings** panel. On the sender: payload size
-(512 KB or 2 MB), tx fps, bytes per frame, error-correction level, and
-display size. Changing anything restarts the stream, and the receiver resets
-automatically off the new session id. On the receiver: capture width,
-capture fps, and decode worker count, applied when the camera starts.
+Both pages have a collapsed **Settings** panel. On the sender: tx fps, bytes
+per frame, error-correction level, and display size. Changing anything while
+transmitting restarts the stream, and the receiver resets automatically off
+the new session id. On the receiver: capture width, capture fps, and decode
+worker count, applied when the camera starts.
 
 | setting | default | notes |
 |---|---|---|
