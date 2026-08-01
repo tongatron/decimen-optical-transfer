@@ -58,7 +58,9 @@ For the exact code-level delta, compare this repository with
    <kbd>V</kbd>, then choose **Start transmission**.
 4. Choose **Receiver** on the camera device, allow camera access, and point it
    at the animated QR code.
-5. When verification completes, download the reconstructed file.
+5. When verification completes, download the reconstructed file. On compatible
+   mobile browsers, use the native share sheet and choose **Save to Files** to
+   preserve the transferred bytes exactly.
 
 For best throughput, maximize the QR code, increase the sender's screen
 brightness, and keep the receiving device steady.
@@ -181,6 +183,22 @@ Both Sender and Receiver expose an optional **Settings** panel.
 | `npm run dev` | Start the HTTPS development server on the local network. |
 | `npm run build` | Type-check and create the production bundle in `dist/`. |
 | `npm run preview` | Preview the production bundle locally. |
+| `npm test` | Run deterministic protocol, fountain, envelope, and simulator tests. |
+| `npm run test:browsers` | Run the fixed vectors in Chromium and WebKit with Playwright. |
+| `npm run simulate` | Run the reproducible binary optical-channel simulator. |
+
+An unlinked diagnostics page is available at `/benchmark/` while the development
+or preview server is running. It cannot run directly from a `file://` URL because
+it loads bundled modules and the ZXing WASM decoder. It measures fountain
+generation, QR generation, canvas rendering, capture, WASM decode, fountain
+peeling, and optical goodput across the same six frame-density profiles offered
+by the Sender. The sender FPS is configurable; the optional camera test requests
+60 fps, falls back to 30 fps, and records the actual resolution and frame rate.
+Goodput is limited by the slowest measured stage instead of reporting
+compute-only throughput. Its JSON export contains metrics and test parameters
+only—never filenames, file contents, hashes, device IDs, or session IDs. On
+mobile browsers, export opens the native share sheet with a real JSON file;
+desktop browsers download the file normally.
 
 ## Acknowledgements
 

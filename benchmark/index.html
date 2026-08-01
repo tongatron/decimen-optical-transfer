@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121009" />
+    <title>Decimen Diagnostics</title>
+    <link rel="stylesheet" href="../shared/style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>DECIMEN <small>— Diagnostics</small></h1>
+    <main class="diagnostics">
+      <p>
+        Measure the fountain, QR, rendering, capture, decode, and peeling stages
+        independently. This page is intentionally absent from normal navigation.
+      </p>
+      <div class="diagnostic-controls">
+        <label for="frame-density">
+          Frame density
+          <select id="frame-density">
+            <option value="all" selected>All sender densities</option>
+            <option value="500">500 B (QR v15)</option>
+            <option value="1000">1000 B (QR v22)</option>
+            <option value="1465">1465 B (QR v27)</option>
+            <option value="1850">1850 B (QR v32)</option>
+            <option value="2331">2331 B (QR v36)</option>
+            <option value="2953">2953 B (QR v40)</option>
+          </select>
+        </label>
+        <label for="sender-fps">
+          Sender FPS
+          <select id="sender-fps">
+            <option>10</option>
+            <option>15</option>
+            <option>20</option>
+            <option selected>24</option>
+            <option>30</option>
+            <option>60</option>
+          </select>
+        </label>
+        <label for="camera-fps">
+          Camera target FPS
+          <select id="camera-fps">
+            <option>30</option>
+            <option selected>60</option>
+          </select>
+        </label>
+        <button id="run" type="button">Run benchmark</button>
+        <label class="camera-option">
+          <input id="include-camera" type="checkbox" />
+          Include camera test (tries 60 → 30 fps)
+        </label>
+        <button id="export" type="button" disabled>Export / share anonymous JSON</button>
+      </div>
+      <p class="hint privacy-note">
+        No filenames, file contents, hashes, device IDs, or session IDs are included in the export.
+      </p>
+      <div id="status" aria-live="polite">Ready.</div>
+      <div id="results" hidden></div>
+      <video id="camera-preview" muted playsinline hidden></video>
+      <canvas id="benchmark-canvas" aria-label="Synthetic QR benchmark frame"></canvas>
+    </main>
+    <script>
+      if (window.location.protocol === "file:") {
+        window.addEventListener("DOMContentLoaded", () => {
+          document.getElementById("run").disabled = true;
+          document.getElementById("status").textContent =
+            "This diagnostics page cannot run from file://. Start it with npm run dev, then open https://localhost:5173/benchmark/.";
+        });
+      }
+    </script>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

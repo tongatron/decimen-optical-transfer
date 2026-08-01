@@ -1,0 +1,73 @@
+.diagnostics {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto 48px;
+}
+
+.diagnostic-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  align-items: end;
+  gap: 14px;
+  margin: 24px 0 12px;
+}
+
+.diagnostic-controls label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.diagnostic-controls .camera-option {
+  flex-direction: row;
+  align-items: center;
+}
+
+.diagnostic-controls select {
+  min-height: 42px;
+  padding: 8px;
+  color: inherit;
+  background: #1c1813;
+  border: 1px solid #594825;
+  border-radius: 6px;
+}
+
+.privacy-note {
+  text-align: left;
+}
+
+#status {
+  margin: 20px 0;
+  color: #ffb257;
+}
+
+#results table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 0.9rem;
+}
+
+#results {
+  overflow-x: auto;
+}
+
+.camera-summary {
+  min-width: max-content;
+}
+
+#results th,
+#results td {
+  padding: 10px;
+  border-bottom: 1px solid #594825;
+  text-align: left;
+}
+
+#benchmark-canvas,
+#camera-preview {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  margin: 24px auto;
+  border-radius: 8px;
+}

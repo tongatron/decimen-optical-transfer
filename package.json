@@ -15,15 +15,25 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "npm run typecheck && vite build",
+    "typecheck": "tsc && tsc -p tsconfig.tests.json",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:browsers": "playwright test",
+    "simulate": "tsx simulator/cli.ts",
+    "check": "npm run test && npm run build"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.1",
+    "@types/node": "^20.0.0",
     "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-basic-ssl": "^1.2.0",
     "qrcode": "^1.5.4",
+    "tsx": "^4.23.1",
     "typescript": "^5.5.0",
     "vite": "^6.0.0",
+    "vitest": "^3.2.6",
     "zxing-wasm": "^2.0.0"
   }
 }

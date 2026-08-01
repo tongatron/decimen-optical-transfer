@@ -330,12 +330,15 @@ button:disabled {
   color: #9a8f76;
   overflow-wrap: anywhere;
 }
-a.download {
+a.download,
+button.download {
   display: inline-block;
   color: #121009;
   background: #ffb257;
+  border: 0;
   border-radius: 8px;
   padding: 12px 20px;
+  font: inherit;
   font-weight: 700;
   text-decoration: none;
   overflow-wrap: anywhere;
