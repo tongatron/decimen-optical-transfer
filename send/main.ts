@@ -34,6 +34,8 @@ const senderPreview = document.getElementById("sender-preview")!;
 const selectedImage = document.getElementById("selected-image") as HTMLImageElement;
 const optimizationSummary = document.getElementById("optimization-summary")!;
 const startBtn = document.getElementById("start-transfer") as HTMLButtonElement;
+const streamControls = document.getElementById("stream-controls")!;
+const pauseBtn = document.getElementById("pause-transfer") as HTMLButtonElement;
 const cfgFps = document.getElementById("cfg-fps") as HTMLSelectElement;
 const cfgBytes = document.getElementById("cfg-bytes") as HTMLSelectElement;
 const cfgEcc = document.getElementById("cfg-ecc") as HTMLSelectElement;
@@ -43,11 +45,13 @@ let generation = 0; // bumped on every restart; stale loops see it and die
 let selectedPayload: Uint8Array | null = null;
 let selectedFile: File | null = null;
 let streaming = false;
+let streamPaused = false;
 let previewUrl: string | null = null;
 
 async function main() {
   fileInput.addEventListener("change", () => void selectFile());
   startBtn.addEventListener("click", () => void startStream());
+  pauseBtn.addEventListener("click", toggleStreamPause);
   for (const el of [cfgFps, cfgBytes, cfgEcc, cfgSize]) {
     el.addEventListener("change", () => {
       if (streaming) void startStream();
@@ -68,6 +72,8 @@ async function selectFile() {
   selectedFile = null;
   startBtn.disabled = true;
   stage.hidden = true;
+  streamControls.hidden = true;
+  setStreamPaused(false);
   clearPreview();
   const file = fileInput.files?.[0];
   fileName.textContent = file?.name ?? "No file selected";
@@ -239,7 +245,9 @@ async function startStream() {
     return;
   }
   streaming = true;
+  setStreamPaused(false);
   stage.hidden = false;
+  streamControls.hidden = false;
   const header: FrameHeader = {
     sessionId,
     seq: 0,
@@ -303,6 +311,10 @@ async function startStream() {
 
   const pump = () => {
     if (gen !== generation) return; // superseded by a settings change
+    if (streamPaused) {
+      setTimeout(pump, 100);
+      return;
+    }
     try {
       while (queue.length < LOOKAHEAD) queue.push(makeFrame());
     } catch (err) {
@@ -319,6 +331,10 @@ async function startStream() {
   const tick = (now: number) => {
     if (gen !== generation) return;
     requestAnimationFrame(tick);
+    if (streamPaused) {
+      nextAt = now + interval;
+      return;
+    }
     if (now < nextAt) return;
     const img = queue.shift();
     if (!img) {
@@ -333,6 +349,17 @@ async function startStream() {
     if (now - nextAt > 3 * interval) nextAt = now + interval; // fell behind — don't burst
   };
   requestAnimationFrame(tick);
+}
+
+function toggleStreamPause() {
+  if (!streaming) return;
+  setStreamPaused(!streamPaused);
+}
+
+function setStreamPaused(paused: boolean) {
+  streamPaused = paused;
+  pauseBtn.textContent = paused ? "Resume" : "Stop";
+  pauseBtn.setAttribute("aria-pressed", String(paused));
 }
 
 void main();

@@ -232,6 +232,23 @@ button:disabled {
   display: block;
   image-rendering: pixelated;
 }
+.stream-controls {
+  width: min(92vw, 640px);
+  display: flex;
+  justify-content: center;
+}
+.stream-controls[hidden] {
+  display: none;
+}
+.stream-controls button {
+  min-width: 150px;
+  padding: 10px 24px;
+  font-size: 15px;
+}
+.stream-controls button[aria-pressed="true"] {
+  color: #ede5d4;
+  background: #5d5038;
+}
 .preview {
   position: relative;
   width: min(92vw, 480px);
