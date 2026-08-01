@@ -46,6 +46,9 @@ if ("serviceWorker" in navigator) {
     const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     if (!manifest) return;
     const workerUrl = new URL("sw.js", manifest.href);
-    void navigator.serviceWorker.register(workerUrl.href, { scope: new URL("./", workerUrl).pathname });
+    void navigator.serviceWorker.register(workerUrl.href, {
+      scope: new URL("./", workerUrl).pathname,
+      updateViaCache: "none",
+    });
   });
 }
