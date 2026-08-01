@@ -36,6 +36,31 @@ h1 small {
 a {
   color: #ffb257;
 }
+.page-navigation {
+  position: sticky;
+  top: max(10px, env(safe-area-inset-top));
+  z-index: 10;
+  width: min(92vw, 640px);
+  display: flex;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+.page-navigation a {
+  padding: 8px 14px;
+  color: #ede5d4;
+  background: rgba(27, 23, 18, 0.94);
+  border: 1px solid #594825;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+}
+.page-navigation a:hover {
+  color: #121009;
+  background: #ffb257;
+}
 .home {
   width: min(92vw, 560px);
   display: flex;
@@ -106,6 +131,17 @@ a {
 .home-note {
   padding-top: 2px;
   color: #7f765f;
+}
+.project-links {
+  width: min(92vw, 640px);
+  margin-top: auto;
+  padding-top: 18px;
+  color: #7f765f;
+  font-size: 11px;
+  text-align: center;
+}
+.project-links a {
+  text-underline-offset: 3px;
 }
 button {
   font: inherit;
