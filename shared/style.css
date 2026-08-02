@@ -198,8 +198,7 @@ a {
 }
 .home-button {
   min-height: 46px;
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0 0 28px;
   padding: 0 15px;
   display: flex;
   align-items: center;
