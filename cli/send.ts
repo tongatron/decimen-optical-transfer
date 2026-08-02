@@ -200,14 +200,17 @@ function browserPage(
   const safeReceiverUrl = escapeHtml(receiverUrl);
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#fbfaf7">
 <title>Decimen CLI sender</title><style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17191b;color:#f1f3f4;
-font:14px ui-monospace,SFMono-Regular,Menlo,monospace}body{display:grid;grid-template-rows:1fr auto}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fbfaf7;color:#111;
+font:14px Arial,Helvetica,sans-serif}body{display:grid;grid-template-rows:1fr auto}
 main{min-height:0;display:grid;place-items:center;padding:2vmin}img{width:min(92vw,calc(100vh - 70px));
-height:min(92vw,calc(100vh - 70px));display:block;background:#fff;image-rendering:pixelated}
-footer{display:flex;gap:16px;align-items:center;justify-content:center;padding:10px 16px;background:#202326}
-button{font:inherit;padding:5px 10px}span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-a{color:#8ab4f8;white-space:nowrap}
+height:min(92vw,calc(100vh - 70px));display:block;background:#fff;border:1px solid #111;image-rendering:pixelated}
+footer{display:flex;gap:16px;align-items:center;justify-content:center;padding:10px 16px;border-top:1px solid #111}
+button{padding:7px 12px;color:#fff;background:#d94b3d;border:1px solid #d94b3d;
+font:700 12px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+a{color:#111;font-weight:700;white-space:nowrap}
 </style></head><body><main><img id="qr" alt="Animated QR transfer"></main><footer>
 <button id="fullscreen">Fullscreen</button><span id="status"></span>
 <a href="${safeReceiverUrl}" target="_blank" rel="noreferrer">Receiver app</a></footer><script>

@@ -12,6 +12,7 @@ const navigatorWithStandalone = navigator as Navigator & { standalone?: boolean 
 const standalone =
   window.matchMedia("(display-mode: standalone)").matches ||
   navigatorWithStandalone.standalone === true;
+if (standalone) document.documentElement.classList.add("standalone");
 const ios =
   /iPad|iPhone|iPod/i.test(navigator.userAgent) ||
   (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);

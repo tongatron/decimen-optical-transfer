@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#121009" />
+    <meta name="theme-color" content="#fbfaf7" />
     <meta name="application-name" content="Decimen" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -14,46 +14,72 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="./shared/style.css" />
   </head>
-  <body>
-    <h1>DECIMEN <small>— Fountain QR File Transfer</small></h1>
+  <body class="home-page">
+    <header class="home-header">
+      <a class="home-brand" href="./" aria-label="Decimen home">
+        <span aria-hidden="true">D</span>
+        <strong>DECIMEN</strong>
+      </a>
+      <a
+        class="home-project-link"
+        href="https://github.com/tongatron/decimen-optical-transfer/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >GitHub</a
+      >
+    </header>
     <main class="home">
-      <p class="home-lead">
-        Transfer a file between two devices using only a screen and a camera.
-        Choose what this device should do.
-      </p>
+      <section class="home-hero">
+        <p class="home-eyebrow">Screen-to-camera file transfer</p>
+        <h1>Move a file.<br />No network required.</h1>
+        <p class="home-lead">
+          Transfer files directly between two devices with an animated QR stream.
+          Nothing is uploaded, paired, or stored.
+        </p>
+      </section>
       <nav class="home-actions" aria-label="Transfer mode">
         <div class="home-function">
-          <a class="home-button" href="./send/">Sender</a>
-          <p>
-            Choose a file and render its fountain-coded QR stream on this
-            screen.
-          </p>
+          <span class="home-function-number" aria-hidden="true">01</span>
+          <div>
+            <h2>Send a file</h2>
+            <p>Choose a file and turn this screen into a secure optical stream.</p>
+          </div>
+          <a class="home-button" href="./send/">Open Sender <span>→</span></a>
         </div>
         <div class="home-function">
-          <a class="home-button" href="./receive/">Receiver</a>
-          <p>
-            Use this device's camera to scan the stream and reconstruct the
-            original file.
-          </p>
+          <span class="home-function-number" aria-hidden="true">02</span>
+          <div>
+            <h2>Receive a file</h2>
+            <p>Use this device's camera to scan and reconstruct the original file.</p>
+          </div>
+          <a class="home-button home-button-secondary" href="./receive/"
+            >Open Receiver <span>→</span></a
+          >
         </div>
       </nav>
       <section class="home-assurances" aria-label="Privacy and offline use">
         <div class="home-assurance">
-          <span class="home-assurance-mark" aria-hidden="true">×</span>
+          <span class="home-assurance-mark" aria-hidden="true">01</span>
           <div>
-            <h2>Nothing stored</h2>
-            <p>Your files are never uploaded or saved by Decimen.</p>
+            <h2>Private by design</h2>
+            <p>The file travels as light. It never reaches a server.</p>
           </div>
         </div>
         <div class="home-assurance">
-          <span class="home-assurance-mark" aria-hidden="true">↯</span>
+          <span class="home-assurance-mark" aria-hidden="true">02</span>
           <div>
             <h2>Works offline</h2>
-            <p>After the first visit, send and receive without internet.</p>
+            <p>After installation, internet access is optional.</p>
+          </div>
+        </div>
+        <div class="home-assurance">
+          <span class="home-assurance-mark" aria-hidden="true">03</span>
+          <div>
+            <h2>Verified output</h2>
+            <p>Integrity is checked before the download is offered.</p>
           </div>
         </div>
       </section>
-      <p class="home-note">The file travels between devices as light.</p>
     </main>
     <section class="pwa-install" data-pwa-panel hidden>
       <div class="pwa-install-title">Install Decimen</div>

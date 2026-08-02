@@ -27,9 +27,9 @@
   min-height: 42px;
   padding: 8px;
   color: inherit;
-  background: #1c1813;
-  border: 1px solid #594825;
-  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .privacy-note {
@@ -38,7 +38,8 @@
 
 #status {
   margin: 20px 0;
-  color: #ffb257;
+  color: var(--text);
+  font-weight: 700;
 }
 
 #results table {
@@ -59,7 +60,7 @@
 #results th,
 #results td {
   padding: 10px;
-  border-bottom: 1px solid #594825;
+  border-bottom: 1px solid var(--border);
   text-align: left;
 }
 
@@ -69,5 +70,5 @@
   width: min(100%, 520px);
   height: auto;
   margin: 24px auto;
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
