@@ -167,6 +167,11 @@ decimen send ./document.pdf
 decimen send /absolute/path/to/document.pdf
 ```
 
+<p align="center">
+  <img src="docs/cli-send-command.png" width="100%"
+       alt="Decimen CLI sending a file from a macOS Terminal window" />
+</p>
+
 Check the installation or list the available options with:
 
 ```bash
@@ -269,6 +274,11 @@ workflow near the bottom of that menu; it is an Automator service rather than a
 Finder extension. The action opens a visible Terminal session running `decimen
 send` with the selected file, including paths that contain spaces or Unicode
 characters.
+
+<p align="center">
+  <img src="docs/finder-file-sharing.png" width="100%"
+       alt="Finder Action menu showing Send with Decimen for the selected file" />
+</p>
 
 Remove the integration with:
 
