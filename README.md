@@ -16,6 +16,30 @@ payload travels as light.
        alt="Decimen home, sender, and receiver screens showing a fountain-coded QR file transfer in progress" />
 </p>
 
+## Contents
+
+- [Highlights](#highlights)
+- [Changes from the original project](#changes-from-the-original-project)
+- [Use the hosted app](#use-the-hosted-app)
+- [Install as a PWA](#install-as-a-pwa)
+- [Local development and self-hosting](#local-development-and-self-hosting)
+  - [Requirements](#requirements)
+  - [Development server](#development-server)
+  - [Production build](#production-build)
+- [CLI and desktop file-manager integrations](#cli-and-desktop-file-manager-integrations)
+  - [Install the CLI](#install-the-cli)
+  - [Choose the Receiver host](#choose-the-receiver-host)
+  - [CLI options](#cli-options)
+  - [macOS Finder](#install-the-finder-action-on-macos)
+  - [Windows File Explorer](#install-the-file-explorer-action-on-windows)
+  - [Linux file managers](#install-the-file-manager-actions-on-linux)
+- [How it works](#how-it-works)
+- [Tuning](#tuning)
+- [Privacy and limitations](#privacy-and-limitations)
+- [Development scripts and diagnostics](#development-scripts-and-diagnostics)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
+
 ## Highlights
 
 - Transfers any file up to 2 MB while preserving its name and media type.
@@ -66,7 +90,18 @@ For the exact code-level delta, compare this repository with
 For best throughput, maximize the QR code, increase the sender's screen
 brightness, and keep the receiving device steady.
 
-## Install locally
+## Install as a PWA
+
+- **Android and desktop Chromium:** open the hosted site and choose the browser's
+  **Install app** action.
+- **iPhone and iPad:** open the site in Safari, choose **Share**, then
+  **Add to Home Screen**.
+- **Any supported browser:** installation is optional; the web app works
+  directly from its URL.
+
+The installed PWA still needs camera permission on the receiving device.
+
+## Local development and self-hosting
 
 ### Requirements
 
@@ -107,7 +142,7 @@ The deployable static site is generated in `dist/`. Host that directory at the
 root of an HTTPS origin. A reusable Nginx example is available at
 [`deploy/nginx-optical-transfer.conf`](deploy/nginx-optical-transfer.conf).
 
-### Optional CLI and desktop integration
+## CLI and desktop file-manager integrations
 
 The hosted web app and PWA do not require the CLI. This optional integration is
 for users who want to start a transfer from a terminal or directly from the file
@@ -115,7 +150,7 @@ manager on macOS, Windows, or Linux. It accepts a file path, opens a local
 browser page containing the animated QR stream, and uses the same file envelope,
 fountain encoder, and frame protocol as the web sender.
 
-#### Install the CLI
+### Install the CLI
 
 Install the project dependencies and link the `decimen` executable once:
 
@@ -139,7 +174,7 @@ decimen --version
 decimen --help
 ```
 
-#### Choose the Receiver host
+### Choose the Receiver host
 
 Run the guided setup after installing the CLI:
 
@@ -195,7 +230,7 @@ To receive the file:
 5. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the sending terminal to stop the local
    server.
 
-#### CLI options
+### CLI options
 
 | Option | Default | Purpose |
 |---|---:|---|
@@ -220,7 +255,7 @@ The CLI has the same 2 MB input limit as the web sender. If the Receiver cannot
 decode the browser-rendered stream, maximize the page, increase screen
 brightness, or reduce `--fps` and `--frame-bytes`.
 
-#### Install the Finder action on macOS
+### Install the Finder action on macOS
 
 After `npm link`, install the included Finder integration with:
 
@@ -244,7 +279,7 @@ Remove the integration with:
 The installer backs up an existing workflow with the same name. The uninstaller
 moves the workflow to Trash instead of deleting it permanently.
 
-#### Install the File Explorer action on Windows
+### Install the File Explorer action on Windows
 
 Requirements: Windows 10 or 11, Git, and Node.js 18 or newer. Open a regular
 PowerShell window; administrator privileges are not required. Clone the
@@ -311,23 +346,52 @@ an [`IExplorerCommand` extension](https://learn.microsoft.com/en-us/windows/apps
 The user-level action above deliberately keeps installation simple and
 reversible.
 
-#### Install the file-manager actions on Linux
+### Install the file-manager actions on Linux
 
-After installing the CLI, run:
+Requirements: Node.js 18 or newer and a supported file manager—GNOME Files
+(Nautilus) or KDE Dolphin. After [installing the CLI](#install-the-cli), verify
+it, choose the Receiver host, and install the integration:
 
 ```bash
+decimen --version
+decimen setup
 ./linux/install-file-manager-actions.sh
 ```
 
-The installer detects GNOME Files (Nautilus) and KDE Dolphin. In GNOME Files,
-select one file and choose **Scripts > Send with Decimen**. In Dolphin, choose
-**Actions > Send with Decimen**. You can also install a specific integration:
+The installer automatically detects GNOME Files and Dolphin. To force a
+specific integration, use:
 
 ```bash
 ./linux/install-file-manager-actions.sh --nautilus
 ./linux/install-file-manager-actions.sh --dolphin
 ./linux/install-file-manager-actions.sh --all
 ```
+
+For a first terminal test, use a small file:
+
+```bash
+decimen send "$HOME/Downloads/example.pdf"
+```
+
+The terminal must print both a local `Decimen sender` URL and the configured
+`Receiver app` URL. The browser must show the animated QR stream and a
+**Receiver app** link.
+
+To test the file-manager action, select exactly one file. In GNOME Files choose
+**Scripts > Send with Decimen**; in Dolphin choose **Actions > Send with
+Decimen**. Close and reopen the file manager if the new action does not appear
+immediately.
+
+If the command or action fails, inspect the executable and configuration:
+
+```bash
+command -v decimen
+decimen --version
+decimen config show
+```
+
+Linux stores the selected Receiver host in
+`${XDG_CONFIG_HOME:-$HOME/.config}/decimen/config.json`.
 
 Remove both integrations with:
 
@@ -337,17 +401,6 @@ Remove both integrations with:
 
 The implementation and future distribution and Chrome-extension phases are
 tracked in [`docs/cli-finder-roadmap.md`](docs/cli-finder-roadmap.md).
-
-## Install as an app
-
-- **Android and desktop Chromium:** open the hosted site and choose the browser's
-  **Install app** action.
-- **iPhone and iPad:** open the site in Safari, choose **Share**, then
-  **Add to Home Screen**.
-- **Any supported browser:** installation is optional; the web app works
-  directly from its URL.
-
-The installed PWA still needs camera permission on the receiving device.
 
 ## How it works
 
@@ -391,7 +444,7 @@ Both Sender and Receiver expose an optional **Settings** panel.
 - Optional Umami analytics, when configured by a deployer, measure site usage;
   they do not receive the transferred file or its contents.
 
-## Scripts
+## Development scripts and diagnostics
 
 | Command | Purpose |
 |---|---|
