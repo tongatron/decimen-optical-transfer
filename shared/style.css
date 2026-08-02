@@ -265,7 +265,7 @@ a {
 }
 .home-assurance-mark {
   color: var(--faint);
-  font: 600 11px/1 var(--font-mono);
+  font: 600 16px/1 var(--font-mono);
 }
 .home-assurance h2 {
   margin: 20px 0 8px;
@@ -517,8 +517,8 @@ button:disabled {
     border-left: 1px solid var(--border);
   }
 
-  .home-assurance-mark {
-    font-size: 8px;
+.home-assurance-mark {
+    font-size: 12px;
   }
 
   .home-assurance h2 {
