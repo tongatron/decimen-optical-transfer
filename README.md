@@ -181,7 +181,7 @@ The CLI has the same 2 MB input limit as the web sender. If the Receiver cannot
 decode the browser-rendered stream, maximize the page, increase screen
 brightness, or reduce `--fps` and `--frame-bytes`.
 
-#### Install the Finder Quick Action on macOS
+#### Install the Finder action on macOS
 
 After `npm link`, install the included Finder integration with:
 
@@ -189,11 +189,12 @@ After `npm link`, install the included Finder integration with:
 ./macos/install-finder-action.sh
 ```
 
-In Finder, select exactly one file, open **Quick Actions**, and choose **Send
-with Decimen**. The action opens a visible Terminal session running `decimen
+In Finder, select exactly one file, open the **Action** menu (the three-dot
+button in the Finder toolbar), and choose **Send with Decimen**. macOS lists the
+workflow near the bottom of that menu; it is an Automator service rather than a
+Finder extension. The action opens a visible Terminal session running `decimen
 send` with the selected file, including paths that contain spaces or Unicode
-characters. If the action is not visible immediately, open **Quick Actions →
-Customize** in Finder and enable it.
+characters.
 
 Remove the integration with:
 
@@ -217,23 +218,6 @@ tracked in [`docs/cli-finder-roadmap.md`](docs/cli-finder-roadmap.md).
   directly from its URL.
 
 The installed PWA still needs camera permission on the receiving device.
-
-## Optional analytics
-
-Analytics are disabled unless a Website ID is provided at build time. Copy the
-example configuration and edit the local copy:
-
-```bash
-cp .env.example .env.local
-```
-
-```dotenv
-UMAMI_WEBSITE_ID=00000000-0000-0000-0000-000000000000
-UMAMI_SCRIPT_URL=https://cloud.umami.is/script.js
-```
-
-`UMAMI_SCRIPT_URL` is optional and only needs to change for a self-hosted Umami
-instance. Environment files other than `.env.example` are ignored by Git.
 
 ## How it works
 

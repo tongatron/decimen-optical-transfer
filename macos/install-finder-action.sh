@@ -17,5 +17,5 @@ cp -R "$source_workflow" "$destination"
 if [[ -x /System/Library/CoreServices/pbs ]]; then
   /System/Library/CoreServices/pbs -flush
 fi
-print "Installed Finder Quick Action: Send with Decimen"
-print "In Finder, select one file and choose Quick Actions > Send with Decimen."
+print "Installed Finder action: Send with Decimen"
+print "In Finder, select one file and choose Action (three dots) > Send with Decimen."

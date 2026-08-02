@@ -29,11 +29,11 @@ Completion criteria:
 - the command starts and stops its localhost server cleanly;
 - tests, type checking, web build, and CLI build all pass.
 
-## Phase 2 — Finder Quick Action
+## Phase 2 — Finder action
 
 Deliverables:
 
-- provide **Send with Decimen** in Finder's Quick Actions menu;
+- provide **Send with Decimen** in Finder's toolbar Action menu;
 - accept exactly one regular file and preserve its full path;
 - open a visible Terminal session running `decimen send <file>`;
 - include reversible installer and uninstaller scripts;
