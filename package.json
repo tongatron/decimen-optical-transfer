@@ -1,7 +1,7 @@
 {
   "name": "decimen-optical-transfer",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "Proof of concept: file transfer between two devices using fountain-coded animated QR codes — screen to camera, no network.",
   "homepage": "https://optical-transfer.tongatron.org/",
