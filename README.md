@@ -305,11 +305,17 @@ Then install the File Explorer action from the repository:
 powershell -ExecutionPolicy Bypass -File .\windows\install-explorer-action.ps1
 ```
 
-Select exactly one file, right-click it, and choose **Send with Decimen**. On
-Windows 11 the action is currently under **Show more options**. It opens a
-visible PowerShell session running `decimen send` with the selected file. The
-installer writes only to the current user's profile and registry, so it does
-not require administrator privileges.
+Select exactly one file and right-click it. The action appears in different
+places depending on the Windows version:
+
+- **Windows 10:** choose **Send with Decimen** directly from the classic context
+  menu.
+- **Windows 11:** choose **Show more options > Send with Decimen**. The simple
+  user-level integration does not appear in Windows 11's compact context menu.
+
+The action opens a visible PowerShell session running `decimen send` with the
+selected file. The installer writes only to the current user's profile and
+registry, so it does not require administrator privileges.
 
 For a first test, use a small file and keep the opened PowerShell window and
 browser page visible:
@@ -321,7 +327,11 @@ decimen send "$env:USERPROFILE\Downloads\example.pdf"
 The terminal must print both a local `Decimen sender` URL and the configured
 `Receiver app` URL. The browser must show the animated QR stream and a
 **Receiver app** link. Test the Explorer action separately by right-clicking the
-same file and selecting **Show more options > Send with Decimen**.
+same file and using the Windows 10 or Windows 11 menu path described above.
+
+A Windows 10 test validates the CLI, host configuration, registry action, and
+QR transfer. It does not validate the additional **Show more options** step or
+the compact-menu behavior specific to Windows 11.
 
 If Windows cannot find or run the command, check the npm link and configuration:
 
