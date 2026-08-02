@@ -262,7 +262,35 @@ brightness, or reduce `--fps` and `--frame-bytes`.
 
 ### Install the Finder action on macOS
 
-After `npm link`, install the included Finder integration with:
+Install the CLI and Finder integration together with:
+
+```bash
+./macos/install-decimen.sh
+```
+
+The installer builds the web app and bundled CLI, installs both under
+`~/.local/share/decimen`, and adds the action under `~/Library/Services`. It
+does not require administrator privileges or an Apple Developer account.
+Node.js 18+ and npm are required for this prototype; a future signed `.dmg` can
+bundle the runtime as well.
+
+To build a distributable macOS disk image containing the prebuilt app, CLI, and
+Finder workflow:
+
+```bash
+./macos/build-dmg.sh
+```
+
+The result is written to `release/Decimen-<version>.dmg`. The user opens the
+image and double-clicks **Install Decimen.app**. This prototype still requires
+Node.js 18+ on the destination Mac; the disk image is not yet signed or
+notarized.
+
+For GitHub Releases, push a version tag such as `v0.1.0`. The macOS workflow
+builds the DMG on a macOS runner and attaches it to the release automatically.
+
+Alternatively, after `npm link`, install only the included Finder integration
+with:
 
 ```bash
 ./macos/install-finder-action.sh
