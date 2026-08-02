@@ -181,10 +181,8 @@ a {
 .home-function {
   min-height: 300px;
   padding: 34px 36px 36px 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr auto;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
   background: transparent;
   border: 0;
 }
@@ -200,7 +198,8 @@ a {
 }
 .home-button {
   min-height: 46px;
-  grid-column: 1;
+  margin-top: auto;
+  margin-bottom: auto;
   padding: 0 15px;
   display: flex;
   align-items: center;
@@ -226,9 +225,9 @@ a {
   outline-offset: 3px;
 }
 .home-button-secondary {
-  color: var(--text);
-  background: transparent;
-  border-color: var(--border);
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 .home-button-secondary:hover {
   color: var(--accent-ink);
