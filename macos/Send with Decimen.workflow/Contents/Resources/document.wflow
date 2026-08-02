@@ -27,9 +27,9 @@
   exit 1
 fi
 
-decimen_bin=$(/bin/zsh -lic 'command -v decimen' 2&gt;/dev/null)
+decimen_bin=$(/bin/zsh -lic 'command -v decimen || test -x "$HOME/.local/bin/decimen" && print "$HOME/.local/bin/decimen"' 2&gt;/dev/null)
 if [[ -z "$decimen_bin" ]]; then
-  /usr/bin/osascript -e 'display dialog "The decimen command is not installed. Run npm link in the Decimen repository first." buttons {"OK"} default button "OK" with icon caution'
+  /usr/bin/osascript -e 'display dialog "The decimen command is not installed. Run the Decimen macOS installer first." buttons {"OK"} default button "OK" with icon caution'
   exit 1
 fi
 

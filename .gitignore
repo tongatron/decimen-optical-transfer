@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dist-cli/
+release/
 coverage/
 playwright-report/
 test-results/

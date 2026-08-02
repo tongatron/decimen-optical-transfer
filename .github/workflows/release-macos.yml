@@ -1,0 +1,33 @@
+name: Release macOS installer
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  macos-dmg:
+    runs-on: macos-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build DMG
+        run: ./macos/build-dmg.sh
+
+      - name: Create GitHub release and upload DMG
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "release/Decimen-*.dmg" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"

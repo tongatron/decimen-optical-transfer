@@ -13,6 +13,7 @@
     "decimen": "dist-cli/decimen.cjs"
   },
   "files": [
+    "dist",
     "dist-cli",
     "macos",
     "windows",
@@ -37,7 +38,7 @@
     "send": "tsx cli/decimen.ts",
     "simulate": "tsx simulator/cli.ts",
     "check": "npm run test && npm run build && npm run build:cli",
-    "prepare": "npm run build:cli"
+    "prepare": "npm run build && npm run build:cli"
   },
   "devDependencies": {
     "@playwright/test": "1.55.1",
