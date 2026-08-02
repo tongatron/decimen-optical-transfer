@@ -22,6 +22,7 @@ payload travels as light.
 - [Changes from the original project](#changes-from-the-original-project)
 - [Use the hosted app](#use-the-hosted-app)
 - [Install as a PWA](#install-as-a-pwa)
+- [Download the macOS installer](#download-the-macos-installer)
 - [Local development and self-hosting](#local-development-and-self-hosting)
   - [Requirements](#requirements)
   - [Development server](#development-server)
@@ -100,6 +101,18 @@ brightness, and keep the receiving device steady.
   directly from its URL.
 
 The installed PWA still needs camera permission on the receiving device.
+
+## Download the macOS installer
+
+The latest macOS package includes the Decimen CLI, the web app build, and the
+Finder action **Send with Decimen**:
+
+**[Download Decimen 0.2.0 for macOS](https://github.com/tongatron/decimen-optical-transfer/releases/download/v0.2.0/Decimen-0.2.0.dmg)**
+
+Open the DMG, double-click **Install Decimen.app**, and follow the macOS
+prompts. After installation, select a file in Finder and choose **Send with
+Decimen** from the action menu. Node.js 18 or newer is required on the Mac;
+the package is currently unsigned and not notarized.
 
 ## Local development and self-hosting
 
@@ -286,7 +299,7 @@ image and double-clicks **Install Decimen.app**. This prototype still requires
 Node.js 18+ on the destination Mac; the disk image is not yet signed or
 notarized.
 
-For GitHub Releases, push a version tag such as `v0.1.0`. The macOS workflow
+For GitHub Releases, push a version tag such as `v0.2.0`. The macOS workflow
 builds the DMG on a macOS runner and attaches it to the release automatically.
 
 Alternatively, after `npm link`, install only the included Finder integration
