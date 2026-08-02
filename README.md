@@ -246,7 +246,25 @@ moves the workflow to Trash instead of deleting it permanently.
 
 #### Install the File Explorer action on Windows
 
-After installing the CLI, open PowerShell in the repository and run:
+Requirements: Windows 10 or 11, Git, and Node.js 18 or newer. Open a regular
+PowerShell window; administrator privileges are not required. Clone the
+repository and install the CLI:
+
+```powershell
+git clone https://github.com/tongatron/decimen-optical-transfer.git
+cd decimen-optical-transfer
+npm install
+npm run build:cli
+npm link
+decimen --version
+decimen setup
+```
+
+During setup, choose the public host, enter a custom HTTPS host, or display the
+self-hosting instructions. Windows stores this choice in
+`%APPDATA%\Decimen\config.json`.
+
+Then install the File Explorer action from the repository:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\windows\install-explorer-action.ps1
@@ -257,6 +275,30 @@ Windows 11 the action is currently under **Show more options**. It opens a
 visible PowerShell session running `decimen send` with the selected file. The
 installer writes only to the current user's profile and registry, so it does
 not require administrator privileges.
+
+For a first test, use a small file and keep the opened PowerShell window and
+browser page visible:
+
+```powershell
+decimen send "$env:USERPROFILE\Downloads\example.pdf"
+```
+
+The terminal must print both a local `Decimen sender` URL and the configured
+`Receiver app` URL. The browser must show the animated QR stream and a
+**Receiver app** link. Test the Explorer action separately by right-clicking the
+same file and selecting **Show more options > Send with Decimen**.
+
+If Windows cannot find or run the command, check the npm link and configuration:
+
+```powershell
+Get-Command decimen
+decimen.cmd --version
+decimen.cmd config show
+```
+
+`decimen.cmd` is a useful fallback when the PowerShell execution policy blocks
+npm's generated `decimen.ps1` shim. Reopen PowerShell after `npm link` if the
+command is still absent from `PATH`.
 
 Remove the integration with:
 
