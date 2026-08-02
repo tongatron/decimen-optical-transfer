@@ -1,11 +1,8 @@
-#!/usr/bin/env -S npx tsx
-
 import { readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import type { AddressInfo } from "node:net";
 import { basename, extname, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import QRCode from "qrcode";
 import { packFile } from "../shared/file-envelope";
 import { TransferEncoder } from "../shared/transfer-encoder";
@@ -23,6 +20,8 @@ const RESET = "\x1b[0m";
 const WHITE_BG_BLACK_FG = "\x1b[47m\x1b[30m";
 
 type Ecc = "L" | "M" | "Q" | "H";
+declare const __DECIMEN_VERSION__: string;
+const VERSION = typeof __DECIMEN_VERSION__ === "string" ? __DECIMEN_VERSION__ : "0.1.0-dev";
 
 interface CliOptions {
   file?: string;
@@ -33,6 +32,7 @@ interface CliOptions {
   terminal: boolean;
   noOpen: boolean;
   help: boolean;
+  version: boolean;
 }
 
 interface QrMatrix {
@@ -41,7 +41,7 @@ interface QrMatrix {
 }
 
 function usage(): string {
-  return `Usage: npm run send -- <file> [options]
+  return `Usage: decimen send <file> [options]
 
 Show a file as an animated, fountain-coded QR stream in a local browser page.
 Open Decimen's Receive page on another device and point its camera here.
@@ -54,6 +54,7 @@ Options:
   --no-open           Print the local URL without opening a browser
   --frames <n>        Stop terminal output after n frames
   -h, --help          Show this help
+  -v, --version       Show the installed version
 
 The browser renderer is recommended for reliable camera scanning.`;
 }
@@ -70,11 +71,14 @@ export function parseArgs(args: string[]): CliOptions {
     terminal: false,
     noOpen: false,
     help: false,
+    version: false,
   };
   for (let i = 0; i < args.length; i++) {
     const argument = args[i]!;
     if (argument === "-h" || argument === "--help") {
       options.help = true;
+    } else if (argument === "-v" || argument === "--version") {
+      options.version = true;
     } else if (argument === "--fps") {
       options.fps = Number(valueAfter(args, i++, argument));
     } else if (argument === "--frame-bytes") {
@@ -113,6 +117,10 @@ export function parseArgs(args: string[]): CliOptions {
     throw new Error("frames can only be used with --terminal");
   }
   return options;
+}
+
+export function normalizeArgs(args: string[]): string[] {
+  return args[0] === "send" ? args.slice(1) : args;
 }
 
 function mediaType(fileName: string): string {
@@ -265,7 +273,11 @@ function sleep(milliseconds: number): Promise<void> {
 }
 
 export async function main(args = process.argv.slice(2)): Promise<void> {
-  const options = parseArgs(args);
+  const options = parseArgs(normalizeArgs(args));
+  if (options.version) {
+    process.stdout.write(`${VERSION}\n`);
+    return;
+  }
   if (options.help) {
     process.stdout.write(`${usage()}\n`);
     return;
@@ -333,12 +345,4 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
     process.removeListener("SIGTERM", stop);
     process.stdout.write(`${RESET}${SHOW_CURSOR}\n`);
   }
-}
-
-const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
-if (import.meta.url === invokedPath) {
-  main().catch((error: unknown) => {
-    process.stderr.write(`decimen: ${error instanceof Error ? error.message : String(error)}\n`);
-    process.exitCode = 1;
-  });
 }

@@ -113,24 +113,31 @@ The CLI sender accepts a file path and opens a local browser page containing the
 animated QR stream. It uses the same file envelope, fountain encoder, and frame
 protocol as the web sender.
 
-Install the project dependencies once:
+Install the project dependencies and link the `decimen` executable once:
 
 ```bash
 npm install
+npm run build:cli
+npm link
 ```
 
-From the repository directory, send a file with:
+The command then works from any directory:
 
 ```bash
-npm run send -- ./document.pdf
+decimen send ./document.pdf
+decimen send /absolute/path/to/document.pdf
 ```
 
-The file path may be relative or absolute. To run the command from any working
-directory, use npm's `--prefix` option:
+Check the installation or list the available options with:
 
 ```bash
-npm --prefix /absolute/path/to/decimen-optical-transfer run send -- /absolute/path/to/document.pdf
+decimen --version
+decimen --help
 ```
+
+During development, `npm run send -- ./document.pdf` remains available as an
+equivalent repository-local command. Run
+`npm unlink -g decimen-optical-transfer` to remove the globally linked command.
 
 The command binds a temporary HTTP server to `127.0.0.1`, prints its URL, and
 opens it in the default browser. The server is reachable only from the sending
@@ -159,7 +166,7 @@ To receive the file:
 For example, to use a slower and less dense stream:
 
 ```bash
-npm run send -- ./document.pdf --fps 8 --frame-bytes 300 --ecc L
+decimen send ./document.pdf --fps 8 --frame-bytes 300 --ecc L
 ```
 
 ANSI mode defaults to 64-byte frames at 6 FPS so it fits a standard 80×24
@@ -169,6 +176,32 @@ the browser renderer is strongly recommended for camera transfers.
 The CLI has the same 2 MB input limit as the web sender. If the Receiver cannot
 decode the browser-rendered stream, maximize the page, increase screen
 brightness, or reduce `--fps` and `--frame-bytes`.
+
+#### Finder Quick Action on macOS
+
+After `npm link`, install the included Finder integration with:
+
+```bash
+./macos/install-finder-action.sh
+```
+
+In Finder, select exactly one file, open **Quick Actions**, and choose **Send
+with Decimen**. The action opens a visible Terminal session running `decimen
+send` with the selected file, including paths that contain spaces or Unicode
+characters. If the action is not visible immediately, open **Quick Actions →
+Customize** in Finder and enable it.
+
+Remove the integration with:
+
+```bash
+./macos/uninstall-finder-action.sh
+```
+
+The installer backs up an existing workflow with the same name. The uninstaller
+moves the workflow to Trash instead of deleting it permanently.
+
+The implementation and future distribution and Chrome-extension phases are
+tracked in [`docs/cli-finder-roadmap.md`](docs/cli-finder-roadmap.md).
 
 ## Install as an app
 
@@ -246,6 +279,7 @@ Both Sender and Receiver expose an optional **Settings** panel.
 |---|---|
 | `npm run dev` | Start the HTTPS development server on the local network. |
 | `npm run build` | Type-check and create the production bundle in `dist/`. |
+| `npm run build:cli` | Bundle the installable `decimen` command in `dist-cli/`. |
 | `npm run preview` | Preview the production bundle locally. |
 | `npm run send -- <file>` | Send a file from the CLI through a local animated QR page. |
 | `npm test` | Run deterministic protocol, fountain, envelope, and simulator tests. |

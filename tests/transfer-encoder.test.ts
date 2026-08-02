@@ -1,6 +1,6 @@
 import QRCode from "qrcode";
 import { describe, expect, it } from "vitest";
-import { parseArgs, renderQr, renderQrSvg } from "../cli/send";
+import { normalizeArgs, parseArgs, renderQr, renderQrSvg } from "../cli/send";
 import { LTDecoder } from "../shared/fountain";
 import { parseFrame } from "../shared/protocol";
 import { TransferEncoder } from "../shared/transfer-encoder";
@@ -32,6 +32,8 @@ describe("shared transfer encoder", () => {
   });
 
   it("parses and validates CLI options", () => {
+    expect(normalizeArgs(["send", "photo.png"])).toEqual(["photo.png"]);
+    expect(normalizeArgs(["photo.png"])).toEqual(["photo.png"]);
     expect(parseArgs(["photo.png", "--fps", "8", "--frame-bytes", "180", "--ecc", "m"]))
       .toMatchObject({ file: "photo.png", fps: 8, frameBytes: 180, ecc: "M", terminal: false });
     expect(() => parseArgs(["file.bin", "--fps", "0"])).toThrow("fps");
