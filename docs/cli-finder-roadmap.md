@@ -66,6 +66,9 @@ Completion criteria:
 ## Phase 4 — Distribution
 
 - add a reproducible package/tarball check in CI;
+- provide guided `decimen setup` host selection and persistent configuration;
+- support the public Receiver, custom HTTPS deployments, and self-hosting
+  instructions without changing the optical transfer path;
 - choose a release channel: npm, Homebrew tap, or signed macOS installer;
 - publish checksums and release notes;
 - add upgrade and uninstall documentation;

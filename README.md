@@ -139,6 +139,45 @@ decimen --version
 decimen --help
 ```
 
+#### Choose the Receiver host
+
+Run the guided setup after installing the CLI:
+
+```bash
+decimen setup
+```
+
+The setup offers three choices:
+
+1. the recommended public Receiver at
+   `https://optical-transfer.tongatron.org/`;
+2. a custom private or public HTTPS deployment;
+3. local/self-hosted build and deployment instructions.
+
+The public host is the default even if setup has not been run. For unattended
+installations, use one of these commands:
+
+```bash
+decimen setup --public
+decimen setup --host https://decimen.example/
+decimen setup --self-hosted
+```
+
+Inspect or change the selection later with:
+
+```bash
+decimen config show
+decimen config host https://decimen.example/
+decimen config use-public
+```
+
+Custom hosts must use HTTPS; plain HTTP is accepted only for `localhost`. The
+choice is stored in the user's configuration directory. It identifies the app
+to open on the receiving device and is shown by `decimen send`; file contents
+are still served only from `127.0.0.1` and transferred through the animated QR
+stream. Setup may offer to open the GitHub project page, but leaving a star is
+always optional and is never checked.
+
 During development, `npm run send -- ./document.pdf` remains available as an
 equivalent repository-local command. Run
 `npm unlink -g decimen-optical-transfer` to remove the globally linked command.

@@ -6,6 +6,7 @@ import { basename, extname, resolve } from "node:path";
 import QRCode from "qrcode";
 import { packFile } from "../shared/file-envelope";
 import { TransferEncoder } from "../shared/transfer-encoder";
+import { loadConfig } from "./config";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const BROWSER_DEFAULT_FPS = 24;
@@ -183,8 +184,20 @@ export function renderQrSvg(qr: QrMatrix, margin = MARGIN): string {
     `<path fill="#000" d="${runs.join("")}"/></svg>`;
 }
 
-function browserPage(fileName: string, fileBytes: number, fps: number, frameBytes: number): string {
+function escapeHtml(value: string): string {
+  return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
+function browserPage(
+  fileName: string,
+  fileBytes: number,
+  fps: number,
+  frameBytes: number,
+  receiverUrl: string,
+): string {
   const safeName = JSON.stringify(fileName).replaceAll("<", "\\u003c");
+  const safeReceiverUrl = escapeHtml(receiverUrl);
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>Decimen CLI sender</title><style>
@@ -194,8 +207,10 @@ main{min-height:0;display:grid;place-items:center;padding:2vmin}img{width:min(92
 height:min(92vw,calc(100vh - 70px));display:block;background:#fff;image-rendering:pixelated}
 footer{display:flex;gap:16px;align-items:center;justify-content:center;padding:10px 16px;background:#202326}
 button{font:inherit;padding:5px 10px}span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a{color:#8ab4f8;white-space:nowrap}
 </style></head><body><main><img id="qr" alt="Animated QR transfer"></main><footer>
-<button id="fullscreen">Fullscreen</button><span id="status"></span></footer><script>
+<button id="fullscreen">Fullscreen</button><span id="status"></span>
+<a href="${safeReceiverUrl}" target="_blank" rel="noreferrer">Receiver app</a></footer><script>
 const fileName=${safeName};const fps=${fps};const frameBytes=${frameBytes};let seq=0;
 const qr=document.getElementById("qr");const status=document.getElementById("status");
 document.getElementById("fullscreen").onclick=()=>document.documentElement.requestFullscreen?.();
@@ -221,8 +236,9 @@ async function runBrowser(
   frameBytes: number,
   ecc: Ecc,
   shouldOpen: boolean,
+  receiverUrl: string,
 ): Promise<void> {
-  const page = browserPage(fileName, fileBytes, fps, frameBytes);
+  const page = browserPage(fileName, fileBytes, fps, frameBytes, receiverUrl);
   const server = createServer((request, response) => {
     const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
     if (pathname === "/") {
@@ -253,7 +269,7 @@ async function runBrowser(
   });
   const address = server.address() as AddressInfo;
   const url = `http://127.0.0.1:${address.port}/`;
-  process.stdout.write(`Decimen sender: ${url}\nPress Ctrl+C to stop.\n`);
+  process.stdout.write(`Decimen sender: ${url}\nReceiver app: ${receiverUrl}\nPress Ctrl+C to stop.\n`);
   if (shouldOpen) openBrowser(url);
 
   await new Promise<void>((resolveStop) => {
@@ -286,6 +302,7 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
   if (options.terminal && !process.stdout.isTTY) {
     throw new Error("terminal rendering requires an interactive terminal");
   }
+  const config = await loadConfig();
 
   const filePath = resolve(options.file);
   const fileInfo = await stat(filePath);
@@ -301,7 +318,16 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
   const encoder = new TransferEncoder(payload, frameBytes, sessionId);
 
   if (!options.terminal) {
-    await runBrowser(encoder, fileName, fileInfo.size, fps, frameBytes, options.ecc, !options.noOpen);
+    await runBrowser(
+      encoder,
+      fileName,
+      fileInfo.size,
+      fps,
+      frameBytes,
+      options.ecc,
+      !options.noOpen,
+      config.receiverUrl,
+    );
     return;
   }
 
