@@ -20,6 +20,7 @@
     "linux",
     "docs/cli-finder-roadmap.md",
     "README.md",
+    "README.it.md",
     "LICENSE"
   ],
   "engines": {

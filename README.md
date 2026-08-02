@@ -5,7 +5,16 @@ with an animated, fountain-coded QR stream. The transfer needs no network path
 between the devices, account, pairing, native app, or intermediary server: the
 payload travels as light.
 
-**[Open the live app](https://optical-transfer.tongatron.org/)**
+[![CI](https://github.com/tongatron/decimen-optical-transfer/actions/workflows/ci.yml/badge.svg)](https://github.com/tongatron/decimen-optical-transfer/actions/workflows/ci.yml)
+[![Live app](https://img.shields.io/badge/live_app-optical--transfer.tongatron.org-2ea44f?logo=googlechrome&logoColor=white)](https://optical-transfer.tongatron.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node.js 18+](https://img.shields.io/badge/node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+
+**[Open the live app](https://optical-transfer.tongatron.org/)** ·
+**[Leggi in italiano](README.it.md)**
+
+> **Status:** maintained prototype. The web app is usable today; the current
+> payload limit is 2 MB and the macOS package is unsigned and not notarized.
 
 > This repository is a maintained fork of
 > [bashalarmistalt/decimen-optical-transfer](https://github.com/bashalarmistalt/decimen-optical-transfer).
@@ -38,8 +47,20 @@ payload travels as light.
 - [Tuning](#tuning)
 - [Privacy and limitations](#privacy-and-limitations)
 - [Development scripts and diagnostics](#development-scripts-and-diagnostics)
+- [Tests](#tests)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
+
+## At a glance
+
+| | Details |
+|---|---|
+| **Transport** | Animated QR codes from a screen to a camera |
+| **Recovery** | LT fountain coding tolerates loss, duplicates, reordering, and late starts |
+| **Privacy** | File bytes stay on the sender and receiver; no relay is required |
+| **Web app** | PWA with Send/Receive routes and offline app shell |
+| **CLI** | `decimen send` with macOS Finder, Windows Explorer, and Linux file-manager integrations |
+| **Limit** | 2 MB per file |
 
 ## Highlights
 
@@ -90,6 +111,21 @@ For the exact code-level delta, compare this repository with
 
 For best throughput, maximize the QR code, increase the sender's screen
 brightness, and keep the receiving device steady.
+
+### Quick start from the CLI
+
+The CLI is optional. After installing Node.js 18+ and the project dependencies:
+
+```bash
+npm install
+npm run build:cli
+npm link
+decimen send ./document.pdf
+```
+
+The command opens a local sender page. Use Decimen's **Receiver** on the second
+device and point its camera at the animated QR stream. The file is served only
+from `127.0.0.1`; it is not uploaded to the configured Receiver app host.
 
 ## Install as a PWA
 
@@ -514,9 +550,35 @@ Both Sender and Receiver expose an optional **Settings** panel.
 | `npm run build:cli` | Bundle the installable `decimen` command in `dist-cli/`. |
 | `npm run preview` | Preview the production bundle locally. |
 | `npm run send -- <file>` | Send a file from the CLI through a local animated QR page. |
-| `npm test` | Run deterministic protocol, fountain, envelope, and simulator tests. |
+| `npm test` | Run deterministic protocol, fountain, envelope, CLI, and simulator tests. |
 | `npm run test:browsers` | Run the fixed vectors in Chromium and WebKit with Playwright. |
 | `npm run simulate` | Run the reproducible binary optical-channel simulator. |
+
+## Tests
+
+The test suite covers the transfer contract at three levels:
+
+- **Unit tests (Vitest):** binary envelopes and frames, fixed protocol vectors,
+  fountain encoding/decoding, integrity checks, CLI parsing/configuration, and
+  optical-channel simulations with loss, bursts, duplicates, reordering,
+  corruption, and foreign sessions.
+- **Browser tests (Playwright):** byte-identical protocol vectors in Chromium
+  and WebKit, plus the diagnostics page and its privacy guarantees.
+- **CI checks:** TypeScript/build validation on Ubuntu, browser vectors with
+  installed Chromium/WebKit, shell syntax on Linux, and PowerShell parsing on
+  Windows.
+
+Run the full local check with:
+
+```bash
+npm run check
+npx playwright install chromium webkit   # first browser run only
+npm run test:browsers
+```
+
+`npm run check` runs the unit tests, production build, and CLI bundle. Browser
+tests require Playwright browser binaries and a running Vite test server, which
+the repository configuration starts automatically.
 
 An unlinked diagnostics page is available at `/benchmark/` while the development
 or preview server is running. It cannot run directly from a `file://` URL because
