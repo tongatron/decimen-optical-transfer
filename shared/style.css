@@ -189,7 +189,6 @@ a {
 .home-function + .home-function {
   padding-right: 0;
   padding-left: 36px;
-  border-left: 1px solid var(--border);
 }
 .home-function h2 {
   margin: 0 0 12px;
@@ -254,7 +253,6 @@ a {
 }
 .home-assurance + .home-assurance {
   padding-left: 28px;
-  border-left: 1px solid var(--border);
 }
 .home-assurance-mark {
   color: var(--faint);
