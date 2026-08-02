@@ -21,7 +21,7 @@ payload travels as light.
 - Transfers any file up to 2 MB while preserving its name and media type.
 - Optimizes JPEG, PNG, and WebP images larger than 1 MB in the browser.
 - Accepts files from the system picker or screenshots pasted from the clipboard.
-- Sends files from the CLI through a local, browser-rendered animated QR stream.
+- Optionally sends files from the CLI through a local, browser-rendered QR stream.
 - Uses fountain coding, so missed or out-of-order frames do not require a restart.
 - Verifies the reconstructed payload before offering it for download.
 - Works on Safari/iOS through `zxing-wasm`; it does not depend on
@@ -107,11 +107,15 @@ The deployable static site is generated in `dist/`. Host that directory at the
 root of an HTTPS origin. A reusable Nginx example is available at
 [`deploy/nginx-optical-transfer.conf`](deploy/nginx-optical-transfer.conf).
 
-### Send from the command line
+### Optional CLI and Finder integration
 
-The CLI sender accepts a file path and opens a local browser page containing the
-animated QR stream. It uses the same file envelope, fountain encoder, and frame
-protocol as the web sender.
+The hosted web app and PWA do not require the CLI. This optional integration is
+for users who want to start a transfer from Terminal or directly from Finder.
+It accepts a file path, opens a local browser page containing the animated QR
+stream, and uses the same file envelope, fountain encoder, and frame protocol as
+the web sender.
+
+#### Install the CLI
 
 Install the project dependencies and link the `decimen` executable once:
 
@@ -177,7 +181,7 @@ The CLI has the same 2 MB input limit as the web sender. If the Receiver cannot
 decode the browser-rendered stream, maximize the page, increase screen
 brightness, or reduce `--fps` and `--frame-bytes`.
 
-#### Finder Quick Action on macOS
+#### Install the Finder Quick Action on macOS
 
 After `npm link`, install the included Finder integration with:
 
