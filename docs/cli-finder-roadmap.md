@@ -45,7 +45,25 @@ Completion criteria:
 - selecting zero or multiple files produces a clear message;
 - uninstalling moves the workflow to Trash rather than deleting it permanently.
 
-## Phase 3 — Distribution
+## Phase 3 — Windows and Linux file-manager actions
+
+Deliverables:
+
+- provide a reversible, user-level File Explorer action on Windows;
+- provide scripts for GNOME Files (Nautilus) and a service menu for Dolphin;
+- keep `decimen send <file>` as the only transfer implementation;
+- preserve paths containing spaces and Unicode characters;
+- validate platform scripts in CI.
+
+Completion criteria:
+
+- selecting exactly one regular file opens a visible terminal session;
+- the action is removable without administrator privileges;
+- Windows explains the Windows 11 **Show more options** location;
+- Linux supports explicit Nautilus and Dolphin installation when automatic
+  detection is unavailable.
+
+## Phase 4 — Distribution
 
 - add a reproducible package/tarball check in CI;
 - choose a release channel: npm, Homebrew tap, or signed macOS installer;
@@ -53,7 +71,7 @@ Completion criteria:
 - add upgrade and uninstall documentation;
 - test current Node.js LTS versions on macOS, Linux, and Windows.
 
-## Phase 4 — Link sharing and Chrome extension
+## Phase 5 — Link sharing and Chrome extension
 
 - add a typed `url` payload to the shared envelope;
 - display the complete URL and highlighted hostname on the Receiver;
@@ -62,7 +80,7 @@ Completion criteria:
 - use a static QR for short URLs and the fountain stream for larger payloads;
 - reuse the shared protocol package rather than calling a permanent local daemon.
 
-## Phase 5 — Native desktop polish
+## Phase 6 — Native desktop polish
 
 - optional menu-bar controller for active transfers;
 - drag-and-drop sender;
@@ -71,6 +89,6 @@ Completion criteria:
 
 ## Current scope
 
-The first implementation covers Phases 1 and 2. Distribution and URL payloads
-remain separate changes so they can be reviewed without altering the existing
-file-transfer protocol.
+The current implementation covers Phases 1 through 3. Distribution and URL
+payloads remain separate changes so they can be reviewed without altering the
+existing file-transfer protocol.

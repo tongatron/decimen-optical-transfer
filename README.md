@@ -107,13 +107,13 @@ The deployable static site is generated in `dist/`. Host that directory at the
 root of an HTTPS origin. A reusable Nginx example is available at
 [`deploy/nginx-optical-transfer.conf`](deploy/nginx-optical-transfer.conf).
 
-### Optional CLI and Finder integration
+### Optional CLI and desktop integration
 
 The hosted web app and PWA do not require the CLI. This optional integration is
-for users who want to start a transfer from Terminal or directly from Finder.
-It accepts a file path, opens a local browser page containing the animated QR
-stream, and uses the same file envelope, fountain encoder, and frame protocol as
-the web sender.
+for users who want to start a transfer from a terminal or directly from the file
+manager on macOS, Windows, or Linux. It accepts a file path, opens a local
+browser page containing the animated QR stream, and uses the same file envelope,
+fountain encoder, and frame protocol as the web sender.
 
 #### Install the CLI
 
@@ -204,6 +204,55 @@ Remove the integration with:
 
 The installer backs up an existing workflow with the same name. The uninstaller
 moves the workflow to Trash instead of deleting it permanently.
+
+#### Install the File Explorer action on Windows
+
+After installing the CLI, open PowerShell in the repository and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\windows\install-explorer-action.ps1
+```
+
+Select exactly one file, right-click it, and choose **Send with Decimen**. On
+Windows 11 the action is currently under **Show more options**. It opens a
+visible PowerShell session running `decimen send` with the selected file. The
+installer writes only to the current user's profile and registry, so it does
+not require administrator privileges.
+
+Remove the integration with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\windows\uninstall-explorer-action.ps1
+```
+
+A direct entry in Windows 11's compact context menu requires a packaged app and
+an [`IExplorerCommand` extension](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/integrate-packaged-app-with-file-explorer).
+The user-level action above deliberately keeps installation simple and
+reversible.
+
+#### Install the file-manager actions on Linux
+
+After installing the CLI, run:
+
+```bash
+./linux/install-file-manager-actions.sh
+```
+
+The installer detects GNOME Files (Nautilus) and KDE Dolphin. In GNOME Files,
+select one file and choose **Scripts > Send with Decimen**. In Dolphin, choose
+**Actions > Send with Decimen**. You can also install a specific integration:
+
+```bash
+./linux/install-file-manager-actions.sh --nautilus
+./linux/install-file-manager-actions.sh --dolphin
+./linux/install-file-manager-actions.sh --all
+```
+
+Remove both integrations with:
+
+```bash
+./linux/uninstall-file-manager-actions.sh
+```
 
 The implementation and future distribution and Chrome-extension phases are
 tracked in [`docs/cli-finder-roadmap.md`](docs/cli-finder-roadmap.md).

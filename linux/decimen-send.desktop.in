@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+MimeType=all/allfiles;
+Actions=sendWithDecimen;
+X-KDE-Protocols=file
+X-KDE-RequiredNumberOfUrls=1
+
+[Desktop Action sendWithDecimen]
+Name=Send with Decimen
+Icon=send-to
+Exec="@LAUNCHER@" %f
