@@ -30,4 +30,4 @@ jobs:
       - name: Create GitHub release and upload DMG
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" "release/Decimen-*.dmg" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" release/Decimen-*.dmg --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
