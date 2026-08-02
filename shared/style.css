@@ -182,7 +182,7 @@ a {
   min-height: 300px;
   padding: 34px 36px 36px 0;
   display: grid;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: 1fr auto;
   gap: 18px;
   background: transparent;
@@ -193,11 +193,6 @@ a {
   padding-left: 36px;
   border-left: 1px solid var(--border);
 }
-.home-function-number {
-  padding-top: 5px;
-  color: var(--faint);
-  font: 600 12px/1 var(--font-mono);
-}
 .home-function h2 {
   margin: 0 0 12px;
   font-size: 26px;
@@ -205,7 +200,7 @@ a {
 }
 .home-button {
   min-height: 46px;
-  grid-column: 2;
+  grid-column: 1;
   padding: 0 15px;
   display: flex;
   align-items: center;
@@ -477,18 +472,13 @@ button:disabled {
   .home-function + .home-function {
     min-height: 150px;
     padding: 16px 0;
-    grid-template-columns: 30px 1fr;
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
   .home-function + .home-function {
     border-left: 0;
     border-top: 1px solid var(--border);
-  }
-
-  .home-function-number {
-    padding-top: 3px;
-    font-size: 10px;
   }
 
   .home-function h2 {
