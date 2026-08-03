@@ -1,9 +1,56 @@
 import { defineConfig, loadEnv } from "vite";
 import type { Plugin } from "vite";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import { marked } from "marked";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+// The three guide pages linked from the home menu. Each is an HTML shell
+// containing a `<!--decimen:doc-->` marker; the Markdown file is the single
+// source of truth for its content and is rendered into that marker for both
+// the dev server and the production build.
+const GUIDE_PAGES = [
+  { route: "guide/project", markdown: "docs/project.md" },
+  { route: "guide/cli", markdown: "docs/cli.md" },
+  { route: "guide/finder-macos", markdown: "docs/finder-macos.md" },
+] as const;
+
+const DOC_MARKER = "<!--decimen:doc-->";
+
+function markdownPages(): Plugin {
+  return {
+    name: "decimen-markdown-pages",
+    transformIndexHtml: {
+      order: "pre",
+      handler(html, ctx) {
+        // Windows reports backslash-separated paths; the routes use "/".
+        const filename = ctx.filename.replace(/\\/g, "/");
+        const page = GUIDE_PAGES.find((candidate) =>
+          filename.endsWith(`${candidate.route}/index.html`),
+        );
+        if (!page || !html.includes(DOC_MARKER)) return html;
+
+        const source = readFileSync(resolve(__dirname, page.markdown), "utf8");
+        const rendered = marked
+          .parse(source, { async: false, gfm: true })
+          // Wide tables scroll inside their own box instead of widening the page.
+          .replace(/<table>/g, '<div class="doc-table"><table>')
+          .replace(/<\/table>/g, "</table></div>");
+        // A replacer function keeps "$" sequences in the Markdown literal.
+        return html.replace(DOC_MARKER, () => rendered);
+      },
+    },
+    configureServer(server) {
+      // Editing a guide's Markdown reloads its page during development.
+      const sources = GUIDE_PAGES.map((page) => resolve(__dirname, page.markdown));
+      server.watcher.add(sources);
+      server.watcher.on("change", (file) => {
+        if (sources.includes(file)) server.ws.send({ type: "full-reload", path: "*" });
+      });
+    },
+  };
+}
 
 function umamiAnalytics(websiteId: string, scriptUrl: string): Plugin {
   return {
@@ -30,13 +77,13 @@ function pwaServiceWorker(): Plugin {
   return {
     name: "decimen-pwa-service-worker",
     apply: "build",
+    // Runs after Vite's HTML plugin, which drops the placeholder entry chunks of
+    // pages whose only script is a module shared with another page (the home and
+    // guide pages all just load shared/pwa.ts). Precaching those never-written
+    // file names would make cache.addAll() reject and the install fail.
+    enforce: "post",
     generateBundle(_options, bundle) {
-      const bundleFiles = Object.keys(bundle)
-        .filter((file) => {
-          const output = bundle[file]!;
-          return output.type === "asset" || !(output.isEntry && output.name === "index");
-        })
-        .sort();
+      const bundleFiles = Object.keys(bundle).sort();
       const versionHash = createHash("sha256");
       for (const file of bundleFiles) {
         const output = bundle[file]!;
@@ -58,12 +105,15 @@ function pwaServiceWorker(): Plugin {
         "./send/",
         "./receive/",
         "./benchmark/",
+        ...GUIDE_PAGES.map((page) => `./${page.route}/`),
         "./manifest.webmanifest",
         "./icons/icon-192.png",
         "./icons/icon-512.png",
         "./icons/icon-maskable-512.png",
         "./icons/apple-touch-icon.png",
-        ...bundleFiles.map((file) => `./${file}`),
+        // The pages themselves are precached above as directory routes, so their
+        // .html files are only hashed for versioning, not fetched a second time.
+        ...bundleFiles.filter((file) => !file.endsWith(".html")).map((file) => `./${file}`),
       ];
       const source = `const CACHE_NAME = "decimen-${version}";
 const CACHE_PREFIX = "decimen-";
@@ -122,6 +172,7 @@ export default defineConfig(({ mode }) => {
     base: "./",
     plugins: [
       basicSsl(),
+      markdownPages(),
       umamiAnalytics(
         env.UMAMI_WEBSITE_ID ?? "",
         env.UMAMI_SCRIPT_URL || "https://cloud.umami.is/script.js",
@@ -135,6 +186,12 @@ export default defineConfig(({ mode }) => {
           send: resolve(__dirname, "send/index.html"),
           receive: resolve(__dirname, "receive/index.html"),
           benchmark: resolve(__dirname, "benchmark/index.html"),
+          ...Object.fromEntries(
+            GUIDE_PAGES.map((page) => [
+              page.route.replace("/", "-"),
+              resolve(__dirname, `${page.route}/index.html`),
+            ]),
+          ),
         },
       },
     },

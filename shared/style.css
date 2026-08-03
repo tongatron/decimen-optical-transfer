@@ -133,6 +133,30 @@ a {
   font-weight: 700;
   text-decoration: none;
 }
+.home-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.home-nav a {
+  padding: 3px 0;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  font: 700 12px/1.4 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.home-nav a:hover,
+.home-nav a[aria-current="page"] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+.home-nav a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
 .home {
   width: min(1120px, 100%);
   display: flex;
@@ -274,6 +298,163 @@ a {
   padding-top: 2px;
   color: var(--faint);
 }
+.doc {
+  width: min(1120px, 100%);
+  padding: 56px 0 64px;
+}
+.doc > * {
+  max-width: 760px;
+}
+.doc > h1 {
+  width: auto;
+  max-width: 940px;
+  margin: 0 0 28px;
+  padding: 0;
+  border: 0;
+  font: 500 clamp(2.2rem, 5vw, 3.6rem)/1.02 var(--font-display);
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+.doc h2 {
+  margin: 52px 0 16px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.doc h3 {
+  margin: 32px 0 10px;
+  font-size: 16px;
+}
+.doc p,
+.doc li {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.doc p {
+  margin: 0 0 16px;
+}
+.doc ul,
+.doc ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+.doc li {
+  margin-bottom: 8px;
+}
+.doc li::marker {
+  color: var(--faint);
+}
+.doc strong {
+  color: var(--text);
+}
+.doc a {
+  color: var(--text);
+  text-underline-offset: 3px;
+}
+.doc a:hover {
+  color: var(--accent);
+}
+.doc code {
+  padding: 1px 5px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  font: 13px/1.4 var(--font-mono);
+  overflow-wrap: anywhere;
+}
+.doc pre {
+  max-width: 760px;
+  margin: 0 0 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+/* shared/doc-copy.ts wraps every command block and adds its copy button. */
+.doc-code {
+  max-width: 760px;
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+}
+.doc-code-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 8px 0;
+}
+.doc-code pre {
+  max-width: none;
+  margin: 0;
+  padding: 10px 18px 16px;
+  border: 0;
+}
+.doc-copy {
+  padding: 5px 10px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border-soft);
+  font: 700 11px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.doc-copy:hover {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.doc-copy.is-copied,
+.doc-copy.is-copied:hover {
+  color: var(--accent-ink);
+  background: var(--ok);
+  border-color: var(--ok);
+}
+.doc-copy:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.doc pre code {
+  padding: 0;
+  background: none;
+  border: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: normal;
+  white-space: pre;
+}
+.doc .doc-table {
+  max-width: 760px;
+  margin: 0 0 20px;
+  overflow-x: auto;
+}
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.doc th,
+.doc td {
+  padding: 10px 14px 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--muted);
+  text-align: left;
+  vertical-align: top;
+}
+.doc th {
+  color: var(--text);
+  font: 700 11px/1.4 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.doc blockquote {
+  margin: 0 0 20px;
+  padding-left: 18px;
+  border-left: 2px solid var(--accent);
+}
+.doc blockquote p:last-child {
+  margin-bottom: 0;
+}
 .project-links {
   width: min(1120px, 100%);
   margin-top: auto;
@@ -399,6 +580,27 @@ button:disabled {
   padding-bottom: 14px;
 }
 
+/* Below this width the brand, menu, and GitHub link stop fitting on one row. */
+@media (max-width: 860px) {
+  .home-header {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding-bottom: 10px;
+  }
+
+  .home-nav {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    padding-bottom: 4px;
+  }
+
+  .doc {
+    padding-top: 40px;
+  }
+}
+
 @media (display-mode: standalone) {
   .home-hero {
     display: none;
@@ -450,6 +652,18 @@ button:disabled {
 
   .home-project-link {
     font-size: 11px;
+  }
+
+  .home-nav a {
+    font-size: 11px;
+  }
+
+  .doc {
+    padding-bottom: 40px;
+  }
+
+  .doc h2 {
+    margin-top: 40px;
   }
 
   .home-hero {
