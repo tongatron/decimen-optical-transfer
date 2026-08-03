@@ -88,8 +88,8 @@ The upstream proof of concept sends a bundled sample image. This fork adds:
   clearer transfer status;
 - an installable PWA, generated service worker, offline app shell, icons, and
   update-safe cache handling;
-- optional, environment-configured Umami analytics that never receives file
-  contents;
+- self-hosted Umami analytics on the built site, redirectable or switched off
+  through environment variables, that never receive file contents;
 - production-ready static hosting support.
 
 For the exact code-level delta, compare this repository with
@@ -538,8 +538,10 @@ Both Sender and Receiver expose an optional **Settings** panel.
 - The current payload limit is 2 MB.
 - Optical performance depends on screen brightness, camera focus, distance,
   reflections, motion, and device refresh/capture rates.
-- Optional Umami analytics, when configured by a deployer, measure site usage;
-  they do not receive the transferred file or its contents.
+- Umami analytics on the built site measure site usage from a self-hosted
+  instance; they do not receive the transferred file or its contents. The dev
+  server sends nothing, and `UMAMI_WEBSITE_ID`/`UMAMI_SCRIPT_URL` redirect them
+  to another instance or turn them off (see [`.env.example`](.env.example)).
 
 ## Development scripts and diagnostics
 

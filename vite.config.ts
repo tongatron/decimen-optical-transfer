@@ -52,9 +52,18 @@ function markdownPages(): Plugin {
   };
 }
 
+// The self-hosted Umami instance this site reports to. The website ID is public
+// by design — it ships inside the HTML — so it lives here instead of in a build
+// secret, and a deployer overrides both values through the UMAMI_* variables.
+const UMAMI_WEBSITE_ID = "0924fb3b-dfc4-4c72-a61c-675566153b5a";
+const UMAMI_SCRIPT_URL = "https://analytics.tongatron.org/script.js";
+
 function umamiAnalytics(websiteId: string, scriptUrl: string): Plugin {
   return {
     name: "decimen-umami-analytics",
+    // Builds only: the dev server is reachable from the LAN, and every reload
+    // there would otherwise land in the dashboard as real traffic.
+    apply: "build",
     transformIndexHtml() {
       if (!websiteId) return [];
 
@@ -173,9 +182,10 @@ export default defineConfig(({ mode }) => {
     plugins: [
       basicSsl(),
       markdownPages(),
+      // An explicitly empty UMAMI_WEBSITE_ID turns analytics off entirely.
       umamiAnalytics(
-        env.UMAMI_WEBSITE_ID ?? "",
-        env.UMAMI_SCRIPT_URL || "https://cloud.umami.is/script.js",
+        env.UMAMI_WEBSITE_ID ?? UMAMI_WEBSITE_ID,
+        env.UMAMI_SCRIPT_URL || UMAMI_SCRIPT_URL,
       ),
       pwaServiceWorker(),
     ],

@@ -78,8 +78,8 @@ Both Sender and Receiver expose an optional **Settings** panel.
 - The current payload limit is 2 MB per file.
 - Optical performance depends on screen brightness, camera focus, distance,
   reflections, motion, and device refresh and capture rates.
-- Optional Umami analytics, when configured by a deployer, measure site usage.
-  They never receive the transferred file or its contents.
+- Umami analytics on the published site, hosted on a self-run instance, measure
+  site usage. They never receive the transferred file or its contents.
 
 ## Status
 

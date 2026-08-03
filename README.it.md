@@ -112,8 +112,9 @@ npm run test:browsers
   dall’app.
 - Il trasferimento richiede una fotocamera funzionante e dipende da luminosità,
   messa a fuoco, distanza, riflessi e frequenza di acquisizione.
-- Eventuali analytics Umami configurati dal deployer ricevono solo metriche di
-  utilizzo, mai file, nomi, hash o identificativi di sessione.
+- Gli analytics Umami del sito pubblicato, ospitati su un'istanza propria,
+  ricevono solo metriche di utilizzo, mai file, nomi, hash o identificativi di
+  sessione. Il server di sviluppo non invia nulla.
 
 ## Licenza
 
