@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /benchmark/
+
+Sitemap: https://optical-transfer.tongatron.org/sitemap.xml
